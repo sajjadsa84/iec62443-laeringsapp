@@ -205,6 +205,7 @@ export class GameLoop {
     this.ambience.update(deltaSeconds, this.board.boardWidth);
     this.updateSpawning(deltaSeconds);
     this.updateAttackers(deltaSeconds);
+    this.updateThreatStates();
     this.updateDefenseNodes(deltaSeconds);
     this.updateConduits(deltaSeconds);
     this.particles.update(deltaSeconds * 1000);
@@ -332,6 +333,7 @@ export class GameLoop {
       if (attacker.isDead) {
         this.spawnHitFlash(node.x, node.y, attacker.view.x, attacker.view.y, 0x2fe8b0);
         this.particles.burst(attacker.view.x, attacker.view.y, 0xff8080, 10, 95, 380);
+        this.flashNearestConduit(attacker.view.x, attacker.view.y);
         break;
       }
     }
@@ -339,6 +341,22 @@ export class GameLoop {
 
   private updateDefenseNodes(deltaSeconds: number): void {
     for (const node of this.defenseNodes.values()) node.update(deltaSeconds);
+  }
+
+  /** Beregner idle/alert/engaging/overwhelmed for hver forsvarskomponent ut fra faktisk angriper-nærhet. */
+  private updateThreatStates(): void {
+    const aliveAttackers = this.attackers.filter((a) => !a.isDead && !a.reachedTarget);
+    for (const node of this.defenseNodes.values()) {
+      if (node.isInstalling) continue;
+      let nearestDistance = Infinity;
+      let countInRange = 0;
+      for (const attacker of aliveAttackers) {
+        const distance = Math.hypot(attacker.view.x - node.x, attacker.view.y - node.y);
+        if (distance < nearestDistance) nearestDistance = distance;
+        if (distance <= node.rangePx) countInRange++;
+      }
+      node.setThreatState(nearestDistance, countInRange);
+    }
   }
 
   /** Merker hvilke conduits en angriper faktisk beveger seg langs akkurat nå, så de kan lyse korallrødt. */
@@ -352,6 +370,21 @@ export class GameLoop {
       conduit.setUnderAttack(underAttack);
       conduit.update(deltaSeconds);
     }
+  }
+
+  /** Finner conduiten nærmest et stoppet angrep og lar den blinke kort stiplet grå — "blokkert her". */
+  private flashNearestConduit(x: number, y: number): void {
+    let nearest: Conduit | null = null;
+    let nearestDistance = Infinity;
+    for (const conduit of this.conduits) {
+      const distance = conduit.distanceTo({ x, y });
+      if (distance > CONDUIT_ATTACK_THRESHOLD_PX * 3) continue;
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearest = conduit;
+      }
+    }
+    nearest?.flashBlocked();
   }
 
   private spawnFloatingText(text: string, x: number, y: number, color: number): void {

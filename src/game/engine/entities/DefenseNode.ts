@@ -1,7 +1,26 @@
 import { Container, Graphics } from "pixi.js";
 import { getComponent, type ComponentTier } from "../../state/gameStore";
 import { CATEGORY_COLORS_PIXI as CATEGORY_COLORS } from "../../categoryColors";
+import { BOARD_THEME_PIXI } from "../../boardTheme";
+import { blendColor } from "../colorUtils";
 import balance from "../../config/balance.json";
+
+/**
+ * Trusseltilstand — beregnes hvert frame av GameLoop ut fra avstand til
+ * nærmeste angriper og hvor mange som er innenfor rekkevidde samtidig.
+ * Rent visuelt (påvirker ikke skade/blokkering): idle→alert→engaging er en
+ * gradvis oppvåkning etter hvor nær trusselen er; overwhelmed varsler
+ * spilleren om at denne posisjonen trenger forsterkning.
+ */
+export type ThreatState = "idle" | "alert" | "engaging" | "overwhelmed";
+const ALERT_RANGE_MULTIPLIER = 2;
+const OVERWHELM_THRESHOLD = 2;
+const STATE_PULSE_SPEED: Record<ThreatState, number> = {
+  idle: (2 * Math.PI) / 3,
+  alert: 2 * Math.PI,
+  engaging: 2 * Math.PI,
+  overwhelmed: (2 * Math.PI) / 0.5,
+};
 
 /**
  * Piksler per "range"-enhet fra components.json. Ren rendering/geometri, ikke en
@@ -120,7 +139,11 @@ export class DefenseNode {
   private readonly frame: Graphics;
   private readonly tierDots: Graphics;
   private readonly frameColor: number;
+  private lastGlowColor: number;
   private pulseElapsed = 0;
+  private threatPulsePhase = Math.random() * Math.PI * 2;
+  private threatState: ThreatState = "idle";
+  private isHovering = false;
   private sweepPhase = Math.random() * Math.PI * 2;
   private fireRingElapsedMs: number | null = null;
   private installFraction = 0;
@@ -181,13 +204,14 @@ export class DefenseNode {
     this.view.addChild(this.icon);
 
     // Avrundet ramme rundt selve ikonet — skiller "kortet" tydelig fra
-    // bakgrunnsgløden og gjør det lesbart som én samlet enhet.
-    this.frame = new Graphics().roundRect(-ICON_RADIUS - 4, -ICON_RADIUS - 4, (ICON_RADIUS + 4) * 2, (ICON_RADIUS + 4) * 2, 8).stroke({
-      width: 1.5,
-      color,
-      alpha: 0.55,
-    });
+    // bakgrunnsgløden og gjør det lesbart som én samlet enhet. Farges om
+    // (ikke tint — grafikken er allerede tegnet i en farge, så en enkel
+    // tint ville multiplisert i stedet for å bytte fargen rent) idet
+    // trusseltilstanden eskalerer mot ravgul/rød.
+    this.frame = new Graphics();
     this.view.addChild(this.frame);
+    this.lastGlowColor = color;
+    this.redrawFrame(color);
 
     // Nivåindikator: 1-3 små prikker under ikonet, fylt opp til gjeldende tier.
     this.tierDots = new Graphics();
@@ -200,11 +224,35 @@ export class DefenseNode {
     this.view.eventMode = "static";
     this.view.cursor = "pointer";
     this.view.on("pointerover", () => {
-      this.rangeCircle.visible = true;
+      this.isHovering = true;
     });
     this.view.on("pointerout", () => {
-      this.rangeCircle.visible = false;
+      this.isHovering = false;
     });
+  }
+
+  private redrawFrame(color: number): void {
+    this.frame
+      .clear()
+      .roundRect(-ICON_RADIUS - 4, -ICON_RADIUS - 4, (ICON_RADIUS + 4) * 2, (ICON_RADIUS + 4) * 2, 8)
+      .stroke({ width: 1.5, color, alpha: 0.55 });
+  }
+
+  /**
+   * Kalt av GameLoop hvert frame med avstand til nærmeste angriper og hvor
+   * mange som er innenfor rekkevidde samtidig — avgjør idle/alert/engaging/
+   * overwhelmed. Selve skade-/blokkeringslogikken er upåvirket; dette er kun
+   * det visuelle signalet til spilleren.
+   */
+  setThreatState(nearestDistance: number, countInRange: number): void {
+    this.threatState =
+      countInRange > OVERWHELM_THRESHOLD
+        ? "overwhelmed"
+        : countInRange >= 1
+          ? "engaging"
+          : nearestDistance <= this.rangePx * ALERT_RANGE_MULTIPLIER
+            ? "alert"
+            : "idle";
   }
 
   /** Kalt når spilleren oppgraderer komponenten — effekten skal endre seg umiddelbart, ikke bare ved neste plassering. */
@@ -259,9 +307,12 @@ export class DefenseNode {
   }
 
   update(deltaSeconds: number): void {
+    const sweepSpeed = this.threatState === "idle" ? 1.5 : this.threatState === "alert" ? 3 : 5;
     if (this.sweep) {
-      this.sweepPhase += deltaSeconds * 1.5;
+      this.sweepPhase += deltaSeconds * sweepSpeed;
       this.sweep.rotation = this.sweepPhase;
+      this.sweep.tint =
+        this.threatState === "overwhelmed" ? BOARD_THEME_PIXI.threat : this.threatState === "idle" ? 0xffffff : BOARD_THEME_PIXI.alert;
     }
 
     if (this.isInstalling) {
@@ -271,6 +322,31 @@ export class DefenseNode {
         .clear()
         .arc(0, 0, ICON_RADIUS + 6, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * this.installFraction)
         .stroke({ width: 3, color: 0xffb020, alpha: 0.9 });
+    } else {
+      // Generisk trussel-eskalering, delt av alle 16 komponenttyper inntil hver
+      // får sin egen håndtegnede animasjon (se komponent-spesifikk tabell): rolig
+      // pust i idle, raskere puls + ravgul kantglød i alert, full aktivering med
+      // synlig rekkeviddesirkel i engaging, rød risting i overwhelmed.
+      this.threatPulsePhase += deltaSeconds * STATE_PULSE_SPEED[this.threatState];
+      const pulse = Math.abs(Math.sin(this.threatPulsePhase));
+
+      const minAlpha =
+        this.threatState === "idle" ? 0.85 : this.threatState === "overwhelmed" ? 0.5 : 0.7;
+      this.icon.alpha = minAlpha + pulse * (1 - minAlpha);
+
+      const glowColor =
+        this.threatState === "overwhelmed"
+          ? blendColor(this.frameColor, BOARD_THEME_PIXI.threat, 0.75)
+          : this.threatState === "alert"
+            ? blendColor(this.frameColor, BOARD_THEME_PIXI.alert, 0.5)
+            : this.frameColor;
+      if (glowColor !== this.lastGlowColor) {
+        this.lastGlowColor = glowColor;
+        this.redrawFrame(glowColor);
+      }
+
+      this.icon.x = this.threatState === "overwhelmed" ? Math.sin(this.threatPulsePhase * 3) * 1.4 : 0;
+      this.rangeCircle.visible = this.isHovering || this.threatState === "engaging" || this.threatState === "overwhelmed";
     }
 
     if (this.fireRingElapsedMs !== null) {

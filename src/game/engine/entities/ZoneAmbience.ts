@@ -5,7 +5,7 @@ const TEAL = 0x2fe8b0;
 const CYAN = 0x18a6e0;
 const PURPLE = 0x6b6fe0;
 const AMBER = 0xffb020;
-const MUTED = 0x4a5a86;
+const MUTED = 0x5b7a8c;
 
 interface Blinker {
   view: Graphics;
@@ -57,8 +57,8 @@ export class ZoneAmbience {
 
   private desk(x: number, y: number): void {
     const g = new Graphics();
-    g.roundRect(x - 12, y - 4, 24, 8, 1.5).fill({ color: MUTED, alpha: 0.4 });
-    g.roundRect(x - 8, y - 12, 16, 9, 1).fill({ color: MUTED, alpha: 0.55 });
+    g.roundRect(x - 12, y - 4, 24, 8, 1.5).fill({ color: MUTED, alpha: 0.75 });
+    g.roundRect(x - 8, y - 12, 16, 9, 1).fill({ color: MUTED, alpha: 0.85 });
     this.view.addChild(g);
     this.addBlinker(x, y - 8, 1.3, TEAL);
   }
@@ -69,7 +69,7 @@ export class ZoneAmbience {
 
   private serverRack(x: number, y: number): void {
     const g = new Graphics();
-    g.roundRect(x - 9, y - 16, 18, 32, 2).fill({ color: MUTED, alpha: 0.4 });
+    g.roundRect(x - 9, y - 16, 18, 32, 2).fill({ color: MUTED, alpha: 0.75 });
     for (let i = 0; i < 3; i++) {
       g.rect(x - 6, y - 12 + i * 9, 12, 1.4).fill({ color: 0x0a0e27, alpha: 0.6 });
     }
@@ -91,7 +91,7 @@ export class ZoneAmbience {
 
   private cabinet(x: number, y: number): void {
     const g = new Graphics();
-    g.roundRect(x - 14, y - 20, 28, 40, 2).fill({ color: MUTED, alpha: 0.38 });
+    g.roundRect(x - 14, y - 20, 28, 40, 2).fill({ color: MUTED, alpha: 0.7 });
     g.roundRect(x - 10, y - 15, 20, 30, 1).stroke({ width: 1, color: PURPLE, alpha: 0.4 });
     this.view.addChild(g);
     this.addBlinker(x, y - 10, 1.2, PURPLE);
@@ -104,7 +104,7 @@ export class ZoneAmbience {
 
   private crate(x: number, y: number): void {
     const g = new Graphics();
-    g.roundRect(x - 10, y - 8, 20, 16, 1.5).fill({ color: AMBER, alpha: 0.28 });
+    g.roundRect(x - 10, y - 8, 20, 16, 1.5).fill({ color: AMBER, alpha: 0.5 });
     g.roundRect(x - 10, y - 8, 20, 16, 1.5).stroke({ width: 1, color: AMBER, alpha: 0.4 });
     this.view.addChild(g);
   }

@@ -7,6 +7,7 @@ import { RANGE_UNIT_PX } from "./entities/DefenseNode";
 import boardConfig from "../config/board.json";
 import balanceConfig from "../config/balance.json";
 import { useGameStore, computeRefund, getComponent, type ComponentType } from "../state/gameStore";
+import { BOARD_THEME_HEX } from "../boardTheme";
 
 interface GameCanvasProps {
   selectedComponent: ComponentType | null;
@@ -268,8 +269,8 @@ export function GameCanvas({ selectedComponent, onPlaceAttempt, onOpenComponentP
           {boardConfig.zones.map((zone) => (
             <div
               key={zone.id}
-              className="absolute left-2 text-[11px] font-semibold uppercase tracking-wide text-textMuted"
-              style={{ top: zone.y + 8 }}
+              className="absolute left-2 text-[11px] font-semibold uppercase tracking-wide"
+              style={{ top: zone.y + 8, color: BOARD_THEME_HEX.textDark }}
             >
               {zone.label}
             </div>

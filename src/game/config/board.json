@@ -2,11 +2,11 @@
   "boardWidth": 1320,
   "boardHeight": 760,
   "zones": [
-    { "id": "enterprise", "label": "Enterprise / kontornett (Nivå 4-5)", "x": 0, "y": 0, "width": 1320, "height": 130, "color": "#2A3B6E" },
-    { "id": "dmz", "label": "Industriell DMZ (Nivå 3.5)", "x": 0, "y": 130, "width": 1320, "height": 190, "color": "#253563" },
-    { "id": "backbone", "label": "Backbone / anleggsnett (Nivå 3)", "x": 0, "y": 320, "width": 1320, "height": 130, "color": "#202F58" },
-    { "id": "production", "label": "Produksjonshaller (Nivå 1-2)", "x": 0, "y": 450, "width": 1320, "height": 130, "color": "#1A264A" },
-    { "id": "cell", "label": "Cellenivå / maskiner (Nivå 0)", "x": 0, "y": 580, "width": 1320, "height": 180, "color": "#131B38" }
+    { "id": "enterprise", "label": "Enterprise / kontornett (Nivå 4-5)", "x": 0, "y": 0, "width": 1320, "height": 130, "color": "#7FA8C4" },
+    { "id": "dmz", "label": "Industriell DMZ (Nivå 3.5)", "x": 0, "y": 130, "width": 1320, "height": 190, "color": "#C8DDD8" },
+    { "id": "backbone", "label": "Backbone / anleggsnett (Nivå 3)", "x": 0, "y": 320, "width": 1320, "height": 130, "color": "#DCE6E3" },
+    { "id": "production", "label": "Produksjonshaller (Nivå 1-2)", "x": 0, "y": 450, "width": 1320, "height": 130, "color": "#B8C9BC" },
+    { "id": "cell", "label": "Cellenivå / maskiner (Nivå 0)", "x": 0, "y": 580, "width": 1320, "height": 180, "color": "#9AAEA0" }
   ],
   "nodes": {
     "office": { "x": 450, "y": 35 },
