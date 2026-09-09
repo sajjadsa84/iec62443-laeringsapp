@@ -1,0 +1,96 @@
+{
+  "moduleId": "module-7-incident-response",
+  "title": "Modul 7: Hendelsesrespons",
+  "items": [
+    {
+      "type": "branching",
+      "id": "ransomware-it-to-ot",
+      "title": "Løsepengevirus på vei mot produksjonen",
+      "startNodeId": "start",
+      "nodes": {
+        "start": {
+          "id": "start",
+          "narrativeText": "Klokken er 07:14 en tirsdag morgen. Sikkerhetsovervåkningen din varsler om uvanlig filkrypteringsaktivitet på flere servere i kontornettverket (IT). Foreløpig ser det ut til å være begrenset til IT-siden, men dere vet ikke sikkert om noe har spredd seg videre ennå. Produksjonen går som normalt. Hva gjør du først?",
+          "choices": [
+            {
+              "text": "Isoler IT-nettverket fra OT-nettverket umiddelbart, selv om dere ikke har full oversikt ennå",
+              "nextNodeId": "isolated",
+              "consequenceNote": "Du kutter forbindelsen mellom IT og OT med en gang. Dette stanser ikke angrepet i IT, men det lukker den mest åpenbare veien videre inn i produksjonsmiljøet mens dere undersøker.",
+              "scoreImpact": 3
+            },
+            {
+              "text": "Vent med drastiske tiltak til dere vet mer — la produksjonen fortsette som normalt i mellomtiden",
+              "nextNodeId": "delayed",
+              "consequenceNote": "Dere velger å ikke forstyrre driften ennå. Undersøkelsen tar tid, og i mellomtiden fortsetter alt som før — inkludert eventuelle forbindelser mellom IT og OT.",
+              "scoreImpact": -2
+            }
+          ]
+        },
+        "isolated": {
+          "id": "isolated",
+          "narrativeText": "IT-nettverket er nå isolert fra OT. Under kartleggingen oppdager sikkerhetsteamet en gammel, «midlertidig» VPN-forbindelse fra en ingeniørarbeidsstasjon i IT-sonen rett inn i produksjonsnettverket — satt opp for et prosjekt for over et år siden og aldri fjernet. Hva gjør dere?",
+          "choices": [
+            {
+              "text": "Kartlegg og steng alle andre gjenglemte eller «midlertidige» forbindelser mellom IT og OT, ikke bare de åpenbare",
+              "nextNodeId": "contained-well",
+              "consequenceNote": "Dere finner og stenger VPN-forbindelsen, samt to andre glemte tilkoblinger dere ikke visste om fra før. Angrepet forblir fullstendig begrenset til IT.",
+              "scoreImpact": 3
+            },
+            {
+              "text": "Stol på at hovedisoleringen er nok — VPN-forbindelsen er sikkert ikke noe å bekymre seg for akkurat nå",
+              "nextNodeId": "contained-gap",
+              "consequenceNote": "Dere lar VPN-forbindelsen stå. Den viser seg senere å ha vært aktiv nettopp da angrepet pågikk som verst.",
+              "scoreImpact": -1
+            }
+          ]
+        },
+        "delayed": {
+          "id": "delayed",
+          "narrativeText": "To timer senere har løsepengeviruset spredd seg til flere IT-systemer. En ingeniør, uvitende om alvoret, kobler en bærbar PC med aktiv skadevare til produksjonsnettverket for å hente ut noen loggfiler til en pågående jobb. Kort tid etter starter en HMI-skjerm i produksjonshallen å vise krypterte, uleselige data. Hva gjør dere nå?",
+          "choices": [
+            {
+              "text": "Stans produksjonen umiddelbart og isoler OT-sonen fullstendig, selv om det er kostbart",
+              "nextNodeId": "late-isolation",
+              "consequenceNote": "Dere handler nå, om enn sent. Produksjonen stopper i flere timer, men spredningen i OT stanses før den når flere kontrollere.",
+              "scoreImpact": 1
+            },
+            {
+              "text": "Prioriter å redde IT-systemene først — OT kan vente til IT-krisen er under kontroll",
+              "nextNodeId": "full-outbreak",
+              "consequenceNote": "Mens fokuset forblir på IT, fortsetter skadevaren å spre seg uhindret i produksjonsnettverket.",
+              "scoreImpact": -3
+            }
+          ]
+        },
+        "contained-well": {
+          "id": "contained-well",
+          "narrativeText": "Grundig jobb betalte seg. Ved å lete etter og lukke ALLE forbindelser mellom IT og OT — ikke bare de mest åpenbare — hindret dere skadevaren i å noensinne nå produksjonsnettverket. IT-systemene gjenopprettes fra sikkerhetskopi i løpet av dagen, og produksjonen har ikke vært berørt i det hele tatt.",
+          "choices": [],
+          "isEnding": true,
+          "endingSummary": "Dette er nærmest beste praksis: rask isolering ved første mistanke, kombinert med en grundig kartlegging av ALLE forbindelser mellom IT og OT — også de gamle, «midlertidige» man lett glemmer. Poenget er ikke bare å reagere raskt, men å reagere grundig."
+        },
+        "contained-gap": {
+          "id": "contained-gap",
+          "narrativeText": "Den glemte VPN-forbindelsen viser seg å ha vært aktiv i nettopp det tidsvinduet angrepet pågikk. Et automatisk sikkerhetssystem i OT-sonen oppdager og blokkerer et mistenkelig krypteringsforsøk i siste liten, men det var nære på. En etterfølgende gjennomgang avdekker at forbindelsen hadde stått åpen i over et år.",
+          "choices": [],
+          "isEnding": true,
+          "endingSummary": "Dere unngikk katastrofen, men mest på flaks. Rask isolering er riktig instinkt, men er ikke nok alene — den må følges av en systematisk gjennomgang av ALLE eksisterende forbindelser mellom sonene, ikke bare en antakelse om at hovedgrensen holder."
+        },
+        "late-isolation": {
+          "id": "late-isolation",
+          "narrativeText": "OT-sonen isoleres til slutt, men ikke før én HMI og tilhørende historian-server er kryptert. Produksjonen står stille i over seks timer mens systemene gjenopprettes fra sikkerhetskopi, og driftsteamet må manuelt verifisere at ingen prosessverdier er blitt manipulert før produksjonen kan starte trygt igjen.",
+          "choices": [],
+          "isEnding": true,
+          "endingSummary": "Dere fikk kontroll til slutt, men sent. Å la produksjonen fortsette i håp om at IT-hendelsen ikke ville spre seg, kostet dere verdifull tid. Lærdommen: ved mistanke om skadevare i IT bør isolering mot OT vurderes umiddelbart — ikke etter at OT allerede er rammet."
+        },
+        "full-outbreak": {
+          "id": "full-outbreak",
+          "narrativeText": "Skadevaren sprer seg videre gjennom produksjonsnettverket og krypterer flere HMI-er, en engineering-arbeidsstasjon og deler av historian-arkivet. Produksjonen må stanses i flere dager mens hele OT-miljøet gjenoppbygges fra bunnen, og sikkerhetsteamet må bekrefte at ingen sikkerhetsinstrumenterte funksjoner er blitt kompromittert før anlegget kan startes opp igjen.",
+          "choices": [],
+          "isEnding": true,
+          "endingSummary": "Dette er nærmest verste fall: ved å prioritere IT-gjenoppretting foran å beskytte OT, fikk skadevaren fritt spillerom i produksjonsmiljøet. Konsekvensene ble langt større og dyrere enn de hadde trengt å bli — og i et anlegg med sikkerhetskritiske systemer kunne det i verste fall også fått fysiske konsekvenser."
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "moduleId": "module-1c-network-architect",
+  "title": "Modul 1c: Nettverksarkitekt",
+  "items": [
+    {
+      "type": "topology",
+      "id": "m1c-greenfield-1",
+      "mode": "greenfield",
+      "title": "Bygg fra bunnen: Et lite produksjonsanlegg",
+      "requirementText": "Anlegget har tre produksjonslinjer, én ingeniørstasjon, og ledelsen krever skytilkobling for fjerndrift. Bygg en arkitektur med egne soner, riktig segmentering og beskyttelse mellom sonene.",
+      "validationRules": [
+        {
+          "description": "Ingen direkte forbindelse mellom Enterprise-sonen og Cellesonen uten DMZ og brannmur",
+          "check": "no-direct-enterprise-to-cell"
+        },
+        {
+          "description": "Alle forbindelser mellom soner på ulikt nivå går via en brannmur",
+          "check": "cross-zone-edges-need-firewall"
+        }
+      ],
+      "hints": [
+        "Tenk gjennom hvilke soner du trenger: hvor kommer skytilkoblingen inn, og hvor skal selve produksjonsutstyret stå?",
+        "Enterprise-sonen bør aldri kobles direkte til Produksjonssonen — sett en DMZ mellom dem.",
+        "Hver forbindelse mellom to soner på ulikt nivå trenger sin egen brannmur på selve forbindelsen — ikke bare én brannmur et sted i nettverket."
+      ],
+      "solution": {
+        "nodes": [
+          { "id": "sol-ent", "type": "enterprise-zone", "position": { "x": 250, "y": 40 } },
+          { "id": "sol-fw1", "type": "firewall", "position": { "x": 250, "y": 140 } },
+          { "id": "sol-dmz", "type": "dmz-zone", "position": { "x": 250, "y": 240 } },
+          { "id": "sol-fw2", "type": "firewall", "position": { "x": 250, "y": 340 } },
+          { "id": "sol-prod", "type": "production-zone", "position": { "x": 250, "y": 440 } }
+        ],
+        "edges": [
+          { "source": "sol-ent", "target": "sol-fw1" },
+          { "source": "sol-fw1", "target": "sol-dmz" },
+          { "source": "sol-dmz", "target": "sol-fw2" },
+          { "source": "sol-fw2", "target": "sol-prod" }
+        ]
+      }
+    },
+    {
+      "type": "topology",
+      "id": "m1c-brownfield-1",
+      "mode": "brownfield",
+      "title": "Sikre et eksisterende anlegg: Gammel PLC uten innebygd sikkerhet",
+      "requirementText": "Anlegget har en gammel PLC uten innebygd sikkerhet, som ikke kan oppdateres eller byttes ut med det første. Den låste PLC-en kan ikke flyttes eller fjernes — bygg beskyttelse rundt den i stedet.",
+      "lockedNodes": [
+        {
+          "id": "locked-plc-1",
+          "type": "plc",
+          "label": "Gammel PLC (ingen innebygd sikkerhet, kan ikke oppdateres)",
+          "position": { "x": 250, "y": 380 }
+        }
+      ],
+      "validationRules": [
+        {
+          "description": "Den låste PLC-en har minst én beskyttelseskomponent i nærheten (brannmur, IDS/IPS eller data-diode)",
+          "check": "locked-nodes-protected"
+        },
+        {
+          "description": "Ingen direkte forbindelse mellom Enterprise-sonen og Cellesonen uten DMZ og brannmur",
+          "check": "no-direct-enterprise-to-cell"
+        },
+        {
+          "description": "Alle forbindelser mellom soner på ulikt nivå går via en brannmur",
+          "check": "cross-zone-edges-need-firewall"
+        }
+      ],
+      "hints": [
+        "Den låste PLC-en kan du ikke flytte eller fjerne — bygg beskyttelsen rundt den i stedet.",
+        "En brannmur, IDS/IPS-sensor eller data-diode koblet til (eller rett i nærheten av) PLC-en dekker beskyttelseskravet for den låste noden.",
+        "Husk at forbindelser mellom soner på ulikt nivå fortsatt må gå via en brannmur, akkurat som i en helt ny arkitektur."
+      ],
+      "solution": {
+        "nodes": [
+          { "id": "sol-fw-plc", "type": "firewall", "position": { "x": 250, "y": 290 } },
+          { "id": "sol-cell", "type": "cell-zone", "position": { "x": 250, "y": 200 } },
+          { "id": "sol-fw2", "type": "firewall", "position": { "x": 250, "y": 110 } },
+          { "id": "sol-prod", "type": "production-zone", "position": { "x": 250, "y": 20 } }
+        ],
+        "edges": [
+          { "source": "sol-prod", "target": "sol-fw2" },
+          { "source": "sol-fw2", "target": "sol-cell" },
+          { "source": "sol-cell", "target": "sol-fw-plc" },
+          { "source": "sol-fw-plc", "target": "locked-plc-1" }
+        ]
+      }
+    }
+  ]
+}

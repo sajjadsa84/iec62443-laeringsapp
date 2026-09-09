@@ -1,0 +1,286 @@
+{
+  "moduleId": "module-0-overview",
+  "title": "Oversikt over IEC 62443",
+  "items": [
+    {
+      "type": "quiz",
+      "id": "m0-q1",
+      "question": "Hva er det grunnleggende problemet IEC 62443-serien primært er laget for å løse?",
+      "options": [
+        "Å sikre at driftsdata og prosessverdier holdes konfidensielle for uvedkommende, på samme måte som man beskytter sensitiv informasjon i vanlig IT-sikkerhet",
+        "Å gi bedrifter et sertifikat de kan vise fram overfor kunder og tilsynsmyndigheter, uavhengig av hvor mye den faktiske risikoen reduseres i praksis",
+        "Å håndtere at industrielle kontrollsystemer har andre driftskrav og konsekvenser ved kompromittering enn IT-systemer, og derfor trenger en egen tilnærming til sikkerhet",
+        "Å erstatte behovet for brannmurer og annen grunnleggende nettverkssikkerhet i industrielle anlegg med et rent organisatorisk regelverk"
+      ],
+      "correctIndex": 2,
+      "explanation": "IEC 62443 finnes fordi industrielle kontrollsystemer (OT/IACS) har andre driftskrav enn kontor-IT — kontinuerlig drift, fysiske konsekvenser, lang levetid på utstyr — og derfor trenger en tilpasset, risikobasert tilnærming i stedet for å importere IT-tenkning uendret. Konfidensialitet er også relevant i OT, men det er sjelden hovedgrunnen til kompromittering av et anlegg er alvorlig; det er som regel tap av tilgjengelighet eller integritet som gir de største konsekvensene, så det første alternativet fanger ikke kjernen. Standarden handler heller ikke primært om å skaffe et sertifikat man kan vise fram — et sertifikat uten reell risikoreduksjon er lite verdt og er ikke IEC 62443s formål. Og IEC 62443 erstatter ikke grunnleggende tiltak som brannmurer; den bygger tvert imot videre på slike tiltak og plasserer dem riktig i en sone-/konduit-arkitektur."
+    },
+    {
+      "type": "quiz",
+      "id": "m0-q2",
+      "question": "Innenfor klassisk IT-sikkerhet rangeres ofte konfidensialitet, integritet og tilgjengelighet i den rekkefølgen (C-I-A). Hvordan er dette som regel forskjellig i et OT-miljø?",
+      "options": [
+        "Tilgjengelighet og integritet er som regel viktigere enn konfidensialitet, fordi en stanset eller manipulert prosess kan gi umiddelbare fysiske konsekvenser",
+        "Integritet er som regel det eneste som betyr noe i OT, siden både konfidensialitet og tilgjengelighet kan reduseres uten alvorlige konsekvenser for anlegget",
+        "Konfidensialitet er like viktig i OT som i IT, siden begge miljøer i stor grad håndterer sensitive person- og kundedata som må beskyttes likt",
+        "Tilgjengelighet er underordnet både konfidensialitet og integritet i OT, siden industrielle prosesser sjelden er tidskritiske eller avhengige av kontinuerlig drift"
+      ],
+      "correctIndex": 0,
+      "explanation": "I et OT-miljø er det som regel tilgjengelighet og integritet som veier tyngst, fordi en prosess som stopper eller som mottar/viser manipulerte verdier kan gi umiddelbare fysiske konsekvenser — ikke bare tap av data. Det stemmer ikke at integritet er det eneste som betyr noe; å miste tilgjengelighet (for eksempel gjennom en tjenestenektangrep) kan være minst like alvorlig, siden et anlegg da ikke kan bringes til en trygg tilstand. OT håndterer i hovedsak prosessdata og driftsparametere, ikke primært person- eller kundedata slik kontor-IT gjør, så konfidensialitet er sjelden like kritisk der. Og industrielle prosesser er ofte svært tidskritiske og avhengige av kontinuerlig drift, så å si at tilgjengelighet er underordnet snur situasjonen på hodet."
+    },
+    {
+      "type": "quiz",
+      "id": "m0-q3",
+      "question": "Hvordan er IEC 62443-serien organisert etter den store strukturoppdateringen som kom mot slutten av 2024?",
+      "options": [
+        "I fem hovedgrupper, der kun én ny gruppe (Evaluering) ble lagt til den opprinnelige firedelte inndelingen",
+        "Fortsatt i de samme fire hovedgruppene som ved første utgivelse, men med langt flere underdeler i hver gruppe enn før",
+        "I seks hovedgrupper, der Profiler-gruppen erstattet den tidligere gruppen for Policyer og prosedyrer",
+        "I seks hovedgrupper, der Profiler og Evaluering ble lagt til som to nye grupper i tillegg til den opprinnelige firedelte inndelingen"
+      ],
+      "correctIndex": 3,
+      "explanation": "Strukturoppdateringen mot slutten av 2024 utvidet IEC 62443 fra fire til seks hovedgrupper, ved at to nye grupper — Profiler og Evaluering — kom i tillegg til de fire opprinnelige (Generelt, Policyer/prosedyrer, System og Komponenter/produkter). Det ble altså lagt til to nye grupper, ikke bare én, så påstanden om at kun Evaluering kom til stemmer ikke. De fire opprinnelige gruppene er heller ikke uendret i antall — det kom presist to helt nye kategorier, ikke bare flere underdeler i de gamle. Og Profiler er en ny, egen kategori som kommer i tillegg til Policyer/prosedyrer-gruppen, ikke en erstatning for den."
+    },
+    {
+      "type": "quiz",
+      "id": "m0-q4",
+      "question": "Du støter på en eldre presentasjon som beskriver IEC 62443 med kun fire hovedgrupper: Generelt, Policyer/prosedyrer, System og Komponenter/produkter. Hva bør du tenke?",
+      "options": [
+        "Dette er den opprinnelige strukturen som siden er utvidet med to nye grupper, så det tekniske innholdet er trolig fortsatt gyldig selv om strukturbildet er utdatert",
+        "Dokumentet er utdatert og feil i alle henseender, og bør ikke brukes i noen sammenheng lenger siden strukturen er annerledes i dag",
+        "Presentasjonen har trolig blandet IEC 62443 med en annen, lignende standard som opprinnelig hadde nøyaktig denne firedelte strukturen",
+        "Siden strukturen på IEC 62443 er endret, må enhver tidligere vurdering eller sertifisering mot standarden gjøres fullstendig på nytt"
+      ],
+      "correctIndex": 0,
+      "explanation": "Den firedelte strukturen var den opprinnelige inndelingen av IEC 62443 i mange år, før den ble utvidet med to nye grupper (Profiler og Evaluering) mot slutten av 2024. Et dokument som viser den gamle strukturen er derfor ikke nødvendigvis feil i alt annet — de fleste tekniske kravene og begrepene er uendret, det er kun strukturbildet som er utdatert, så å avskrive hele dokumentet er en overreaksjon. IEC 62443 hadde faktisk selv denne firedelte strukturen historisk, så det er ikke nødvendigvis en forveksling med en annen standard. Og en strukturendring i hvordan delene grupperes, betyr ikke automatisk at innholdet i de publiserte delene har endret seg såpass mye at tidligere vurderinger blir ugyldige."
+    },
+    {
+      "type": "matching",
+      "id": "m0-m3",
+      "instruction": "Koble hver standarddel til det den faktisk handler om.",
+      "pairs": [
+        {
+          "term": "IEC 62443-1-1",
+          "definition": "Introduserer grunnbegreper og de sju Foundational Requirements som resten av serien bygger videre på"
+        },
+        {
+          "term": "IEC 62443-2-1",
+          "definition": "Beskriver kravene til et sikkerhetsprogram (tidligere kalt CSMS) som en asset owner skal etablere og drifte"
+        },
+        {
+          "term": "IEC 62443-3-2",
+          "definition": "Beskriver prosessen for risikovurdering, samt partisjonering i soner og konduiter for et gitt system"
+        },
+        {
+          "term": "IEC 62443-4-2",
+          "definition": "Stiller tekniske krav til komponenter og produkter, som PLS-er og nettverksutstyr, som brukes i IACS"
+        }
+      ]
+    },
+    {
+      "type": "scenario",
+      "id": "m0-s1",
+      "prompt": "Et vannverk ønsker at driftslederne skal kunne følge tanknivåer og pumpestatus i sanntid via et skybasert dashbord, uten å gå via kontrollrommet. IT-avdelingen foreslår løsninger for hvordan dataene skal komme seg fra PLS-ene og ut til skytjenesten. Hvilket forslag er best i tråd med sone- og konduit-tenkningen i IEC 62443?",
+      "choices": [
+        {
+          "text": "Koble PLS-ene direkte til kontornettverket og internett, slik at skytjenesten kan hente data rett fra kontrollerne når den trenger det",
+          "consequence": "Dette fjerner skillet mellom kontrollsonen og resten av verden fullstendig. Hvis skytjenesten eller kontornettverket blir kompromittert, har en angriper nå en direkte vei helt inn til utstyret som styrer selve prosessen.",
+          "correct": false
+        },
+        {
+          "text": "Sette opp en egen historian-/replikeringsserver i en mellomsone (DMZ), som kun leser av prosessdata fra kontrollsonen gjennom en avgrenset konduit, og som deretter sender videre til skytjenesten",
+          "consequence": "Dette er nettopp poenget med soner og konduiter: kontrollsonen forblir isolert med kun én kontrollert, enveis-lignende dataflyt ut. Selv om skytjenesten eller mellomsonen skulle bli angrepet, må angriperen fortsatt forsere en egen barriere for å nå selve kontrollsonen.",
+          "correct": true
+        },
+        {
+          "text": "La være å definere noen egen sone i det hele tatt, men stole på at brannmuren mellom kontor og internett er streng nok",
+          "consequence": "En brannmur mot internett sier ingenting om hvordan kontornettverket forholder seg til kontrollnettverket internt. Uten en egen sone med definert konduit er det fortsatt et åpent, udokumentert spørsmål hvordan (og om) noen kan bevege seg fra kontor til kontrollutstyr.",
+          "correct": false
+        },
+        {
+          "text": "Gi driftslederne fjernaksess direkte inn i kontrollsonens operatørstasjoner via en vanlig fjernskrivebordsløsning fra hjemme-PC-ene sine",
+          "consequence": "Dette blander sammen «vise data» med «full tilgang til kontrollsystemet», og åpner en mye bredere angrepsflate enn nødvendig for det driftslederne faktisk trenger, nemlig å se tall.",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "id": "m0-q5",
+      "question": "Hva er forskjellen mellom en «sone» (zone) og en «konduit» (conduit) i IEC 62443?",
+      "options": [
+        "En konduit er en gruppering av utstyr med likt risikonivå, mens en sone er selve kommunikasjonskanalen mellom to konduiter",
+        "En sone er en gruppering av ressurser med like sikkerhetsbehov, mens en konduit er kommunikasjonskanalen(e) mellom soner der sikkerhetskrav håndheves",
+        "En sone er per definisjon avgrenset til ett enkelt fysisk rom i anlegget, mens en konduit er enhver kabel som fysisk går inn eller ut av rommet",
+        "En konduit er en type brannmurregel plassert på ett enkelt nettverksgrensesnitt, mens en sone er en gruppe brukerkontoer med samme tilgangsnivå"
+      ],
+      "correctIndex": 1,
+      "explanation": "En sone er en gruppering av ressurser som deler samme sikkerhetsbehov, mens en konduit er forbindelsen(e) mellom to eller flere soner, der man legger inn kontroller som brannmurregler eller protokollfiltrering. Det første alternativet bytter rett og slett om på disse to definisjonene. Sone-begrepet er dessuten logisk, ikke nødvendigvis knyttet til ett fysisk rom — flere rom eller bygninger kan tilhøre samme sone, og omvendt kan ett rom romme flere soner, så den fysiske avgrensningen i tredje alternativ er for snever. Og «konduit» er ikke en enkelt brannmurregel eller et synonym for brukerkontogrupper, slik siste alternativ antyder — det er selve kommunikasjonsveien mellom soner, som kan håndheves av flere typer kontroller samtidig."
+    },
+    {
+      "type": "matching",
+      "id": "m0-m1",
+      "instruction": "Koble hvert kjernebegrep til riktig definisjon.",
+      "pairs": [
+        {
+          "term": "Sone (Zone)",
+          "definition": "Gruppering av ressurser i et OT-system som deler samme sikkerhetsbehov og risikoprofil"
+        },
+        {
+          "term": "Konduit (Conduit)",
+          "definition": "Kommunikasjonskanalen(e) mellom to eller flere soner, der sikkerhetskrav håndheves"
+        },
+        {
+          "term": "Sikkerhetsnivå (SL)",
+          "definition": "Et mål på hvor godt en sone eller konduit er beskyttet mot en gitt type angriper"
+        },
+        {
+          "term": "Foundational Requirement (FR)",
+          "definition": "Én av sju overordnede kravkategorier fra IEC 62443-1-1 som resten av standardserien bygger videre på"
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "id": "m0-q6",
+      "question": "Hva betyr forkortelsene SL-T, SL-A og SL-C i IEC 62443?",
+      "options": [
+        "SL-T er nivået et produkt er teknisk i stand til å levere, SL-A er nivået man setter som mål etter en risikovurdering, og SL-C er nivået man har oppnådd i praksis akkurat nå",
+        "SL-T er ønsket nivå basert på en risikovurdering, SL-A er nivået som faktisk er oppnådd i praksis, og SL-C er hva utstyret eller konduiten er teknisk i stand til å levere",
+        "SL-C betyr at en sone er offisielt sertifisert av en uavhengig tredjepart, mens SL-T og SL-A kun er interne begreper uten formell betydning",
+        "SL-A bør normalt settes likt SL-T med en gang systemet tas i bruk, og SL-C blir dermed stort sett overflødig å måle i praksis"
+      ],
+      "correctIndex": 1,
+      "explanation": "SL-T (Target) er sikkerhetsnivået man ønsker å oppnå for en sone, fastsatt ut fra en risikovurdering. SL-A (Achieved) er nivået sonen faktisk har oppnådd i praksis med det utstyret og de tiltakene som er på plass nå. SL-C (Capability) er det utstyret eller konduiten maksimalt er teknisk i stand til å levere. Det første alternativet bytter om på hva T og C faktisk betyr. SL-C handler om teknisk kapasitet, ikke om formell tredjepartssertifisering — den tolkningen finnes ikke i standarden. Og SL-A blir ikke automatisk lik SL-T bare fordi systemet settes i drift; nettopp gapet mellom dem er noe man aktivt må måle og lukke, blant annet fordi SL-C for eksisterende utstyr ofte setter en praktisk grense for hvor høyt SL-A kan bli uten ekstra tiltak."
+    },
+    {
+      "type": "scenario",
+      "id": "m0-s2",
+      "prompt": "Et lite kraftverk har gjennomført en risikovurdering og satt SL-T til nivå 3 for sonen som inneholder de sikkerhetskritiske PLS-ene. Etter kartlegging viser det seg at utstyret som faktisk står der, av tekniske årsaker (blant annet manglende kryptografisk støtte) kun kan nå SL-C tilsvarende nivå 2. Hva bør prosjektteamet gjøre?",
+      "choices": [
+        {
+          "text": "Godta at SL-A blir liggende på nivå 2, og gå videre uten flere tiltak siden utstyret tross alt har «et eller annet» beskyttelsesnivå",
+          "consequence": "Gapet mellom mål (nivå 3) og faktisk oppnådd nivå (nivå 2) er fortsatt der. Risikoen som opprinnelig ble identifisert i risikovurderingen, er ikke redusert til et akseptabelt nivå bare fordi utstyret gjør «noe».",
+          "correct": false
+        },
+        {
+          "text": "Innføre kompenserende tiltak rundt sonen — for eksempel strengere brannmurregler på konduiten inn/ut, tettere overvåking av trafikk og strengere fysisk adgangskontroll — for å redusere den praktiske risikoen selv om enkeltkomponentene ikke kan nå nivå 3 på egen hånd",
+          "consequence": "Dette er nøyaktig tankegangen bak kompenserende mottiltak i IEC 62443: når SL-C for utstyret ikke strekker til, kan man legge til andre lag med beskyttelse rundt sonen for å tette gapet mellom SL-T og SL-A.",
+          "correct": true
+        },
+        {
+          "text": "Sette SL-T ned til nivå 2 i dokumentasjonen, slik at tallene stemmer med det utstyret faktisk klarer",
+          "consequence": "Å justere målet ned for å matche det man allerede har, uten en ny, reell risikovurdering, undergraver hele hensikten med å sette et mål basert på faktisk risiko og konsekvens.",
+          "correct": false
+        },
+        {
+          "text": "Bytte ut kun én av flere PLS-er i sonen med en nyere, sertifisert modell, og anta at hele sonen dermed oppfyller nivå 3",
+          "consequence": "En sones reelle sikkerhetsnivå styres normalt av det svakeste leddet, ikke av den best beskyttede komponenten. Å oppgradere ett element endrer ikke risikobildet for resten av sonen.",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "type": "matching",
+      "id": "m0-m2",
+      "instruction": "Koble hvert sikkerhetsnivå-begrep til riktig definisjon.",
+      "pairs": [
+        {
+          "term": "SL-T (Target)",
+          "definition": "Sikkerhetsnivået man ønsker å oppnå for en sone, fastsatt ut fra en risikovurdering"
+        },
+        {
+          "term": "SL-A (Achieved)",
+          "definition": "Sikkerhetsnivået sonen faktisk har oppnådd i praksis med dagens utstyr og tiltak"
+        },
+        {
+          "term": "SL-C (Capability)",
+          "definition": "Det høyeste sikkerhetsnivået et gitt produkt eller en gitt konduit er teknisk i stand til å levere"
+        },
+        {
+          "term": "Kompenserende tiltak",
+          "definition": "Ekstra tiltak lagt til rundt en sone for å tette gapet når SL-A ikke når opp til SL-T"
+        }
+      ]
+    },
+    {
+      "type": "quiz",
+      "id": "m0-q7",
+      "question": "Hva er «Foundational Requirements» (FR) i IEC 62443-1-1, og hvor mange er det?",
+      "options": [
+        "Sju overordnede kravkategorier (blant annet identitets- og tilgangskontroll, systemintegritet og ressurstilgjengelighet) som senere deler av serien bygger videre på",
+        "Fem overordnede kravkategorier, tilsvarende de fem funksjonene i NIST Cybersecurity Framework",
+        "Tolv detaljerte tekniske kontrollpunkter, ett for hver av de vanligste angrepsvektorene mot IACS",
+        "Et sett med krav som først og fremst gjelder IEC 62443-3-3, og som i liten grad er relevante for andre deler av serien"
+      ],
+      "correctIndex": 0,
+      "explanation": "IEC 62443-1-1 introduserer sju Foundational Requirements: Identification & Access Control, Use Control, System Integrity, Data Confidentiality, Restricted Data Flow, Timely Response to Events og Resource Availability. Antallet fem hentet fra NIST CSF er en forveksling med et annet rammeverk — IEC 62443 opererer med et eget sett på sju, ikke fem. Det finnes heller ikke tolv faste tekniske kontrollpunkter koblet til angrepsvektorer; de sju FR-ene er overordnede egenskaper, ikke en liste over spesifikke angrep. Og FR-ene er nettopp ment å være tverrgående — de refereres og bygges videre på gjennom hele standardserien, ikke bare i 62443-3-3."
+    },
+    {
+      "type": "quiz",
+      "id": "m0-q8",
+      "question": "Hvilket av følgende er IKKE en av de sju Foundational Requirements i IEC 62443-1-1?",
+      "options": [
+        "Restricted Data Flow (begrenset dataflyt)",
+        "Timely Response to Events (rettidig respons på hendelser)",
+        "Network Segmentation (nettverkssegmentering)",
+        "Resource Availability (ressurstilgjengelighet)"
+      ],
+      "correctIndex": 2,
+      "explanation": "«Network Segmentation» er ikke en av de sju Foundational Requirements — det er en teknikk (blant annet gjennom bruk av soner og konduiter) som brukes for å oppnå kravet Restricted Data Flow, men det er ikke selve navnet på en FR i standarden. De faktiske sju er: Identification & Access Control, Use Control, System Integrity, Data Confidentiality, Restricted Data Flow, Timely Response to Events og Resource Availability. Restricted Data Flow handler om at data kun skal flyte dit det er reelt behov for det, Timely Response to Events handler om å oppdage og varsle om hendelser i tide, og Resource Availability handler om at systemet ikke skal kunne settes ut av spill, for eksempel av en tjenestenektangrep (DoS) — alle tre er ekte FR-er, i motsetning til nettverkssegmentering som «bare» er et virkemiddel."
+    },
+    {
+      "type": "quiz",
+      "id": "m0-q9",
+      "question": "Hva menes med «System Under Consideration» (SuC) i IEC 62443?",
+      "options": [
+        "Betegnelsen på en generisk referansearkitektur beskrevet i IEC 62443-3-3, uavhengig av hvilket konkret anlegg man jobber med",
+        "Det konkrete OT/IACS-systemet, avgrenset for et gitt prosjekt, som skal deles inn i soner og konduiter og risikovurderes",
+        "En samlebetegnelse for alle sonene i anlegget til sammen, i praksis brukt som et annet ord for «sone»",
+        "Et eget testlaboratorium hos utstyrsleverandøren der nye produkter verifiseres før de selges som IEC 62443-4-2-kompatible"
+      ],
+      "correctIndex": 1,
+      "explanation": "SuC er det konkrete, avgrensede OT/IACS-systemet i et gitt prosjekt — med kontrollere, operatørstasjoner, ingeniørstasjoner, historian og så videre — som deretter deles inn i soner og konduiter og får tildelt sikkerhetsnivåer. Det er altså ikke en generisk referansearkitektur løsrevet fra et konkret anlegg; SuC er nettopp definisjonen av «dette spesifikke systemet vi nå ser på». Det er heller ikke synonymt med «sone» — SuC er helheten som senere deles opp i soner, ikke summen av dem etterpå. Og det handler ikke om et leverandørs interne testlaboratorium for produktsertifisering; det er en term brukt av asset owner/integrator om det faktiske systemet som skal sikres."
+    },
+    {
+      "type": "quiz",
+      "id": "m0-q10",
+      "question": "Hvordan bør man forstå forholdet mellom IEC 62443 og NIS2-direktivet i EU?",
+      "options": [
+        "NIS2 henviser eksplisitt til IEC 62443 som obligatorisk teknisk standard, slik at alle omfattede virksomheter juridisk sett må dokumentere samsvar med akkurat denne standarden",
+        "IEC 62443 er en frivillig bransjeanbefaling som først og fremst er relevant før NIS2 trer i kraft, og som mister mesteparten av sin praktiske verdi for virksomheter som allerede er omfattet av direktivet",
+        "NIS2 gjelder i praksis kun for virksomhetens IT-avdeling, mens ansvaret for OT-sikkerhet og eventuell bruk av IEC 62443 ligger utelukkende hos driftsorganisasjonen, uavhengig av direktivet",
+        "NIS2 stiller rettslige krav om risikostyring og hendelsesrapportering uten å foreskrive nøyaktig teknisk metode, mens IEC 62443 er en anerkjent, praktisk måte å oppfylle og dokumentere nettopp den typen krav i OT-miljøer"
+      ],
+      "correctIndex": 3,
+      "explanation": "NIS2 er teknologi- og standardnøytralt: direktivet pålegger risikobasert sikkerhetsstyring og hendelsesrapportering, men foreskriver ikke én bestemt teknisk standard som obligatorisk. IEC 62443 er derfor ett av flere anerkjente, praktiske rammeverk en virksomhet kan bruke for å oppfylle og dokumentere nettopp den typen krav i sitt OT-miljø — de utfyller hverandre uten å være identiske. Påstanden om at NIS2 eksplisitt krever IEC 62443 er derfor for sterk. Standarden mister heller ikke sin verdi når regelverket trer i kraft — tvert imot blir den mer relevant, fordi den gir et konkret verktøy for å vise etterlevelse. Og NIS2 er ikke avgrenset til IT-avdelingen; industrielle kontrollsystemer og annen OT hos omfattede virksomheter faller også inn under direktivets virkeområde der de er relevante for driften av vesentlige eller viktige tjenester."
+    },
+    {
+      "type": "scenario",
+      "id": "m0-s3",
+      "prompt": "Sikkerhetsansvarlig i en produksjonsbedrift som er omfattet av NIS2 som «viktig enhet», blir bedt av ledelsen om å dokumentere at bedriftens risikostyringstiltak for OT-miljøet er tilstrekkelige. Hvilken tilnærming gir best reell og etterprøvbar dekning?",
+      "choices": [
+        {
+          "text": "Vise fram bedriftens eksisterende ISO 27001-sertifikat for kontor-IT, og anta at det dekker OT-miljøet også",
+          "consequence": "Et IT-sertifikat sier lite eller ingenting om hvordan de faktiske industrielle kontrollsystemene er segmentert, hvilke sikkerhetsnivåer de har, eller hvordan sikkerhetsprogrammet for OT-driften ser ut. Dette dekker ikke det NIS2 faktisk spør etter for den industrielle delen av virksomheten.",
+          "correct": false
+        },
+        {
+          "text": "Bruke IEC 62443 som praktisk rammeverk: gjennomføre en risikovurdering av OT-systemet (SuC), dele inn i soner/konduiter med tilhørende SL-T, og etablere et dokumentert sikkerhetsprogram for drift og vedlikehold av dette",
+          "consequence": "Dette gir en konkret, etterprøvbar kobling mellom de EU-rettslige kravene om risikostyring i NIS2 og de tekniske/organisatoriske tiltakene som faktisk er gjennomført i OT-miljøet — nøyaktig den typen dokumentasjon en tilsynsmyndighet eller revisor vil lete etter.",
+          "correct": true
+        },
+        {
+          "text": "Konkludere med at NIS2 og IEC 62443 ikke har noe med hverandre å gjøre, og derfor ikke gjøre noe særskilt for OT-miljøet",
+          "consequence": "Dette overser at NIS2 stiller reelle, juridisk bindende krav til nettopp den typen risikostyring som IEC 62443 gir et praktisk rammeverk for å gjennomføre og dokumentere i et OT-miljø.",
+          "correct": false
+        },
+        {
+          "text": "Vente med alt arbeid til den norske/nasjonale gjennomføringen av NIS2 er 100 % ferdig avklart i detalj, før man begynner å se på OT-sikkerheten",
+          "consequence": "Å arbeide med sone-/konduit-arkitektur, risikovurderinger og sikkerhetsprogram tar tid. En passiv vente-og-se-tilnærming skaper unødvendig tidspress og risiko for ikke å være klar når kravene håndheves.",
+          "correct": false
+        }
+      ]
+    }
+  ]
+}

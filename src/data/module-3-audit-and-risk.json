@@ -1,0 +1,138 @@
+{
+  "moduleId": "module-3-audit-and-risk",
+  "title": "Modul 3: Revisjon og risikovurdering",
+  "items": [
+    {
+      "type": "audit",
+      "id": "audit-water-treatment-1",
+      "siteContext": "Du reviderer sikkerhetsprogrammet ved en mellomstor vannbehandlingsstasjon, i tråd med kravene i IEC 62443-2-1. Du har fått tilgang til dokumentasjon, intervjuer og stikkprøver fra anlegget.",
+      "items": [
+        {
+          "id": "a1",
+          "requirementRef": "IEC 62443-2-1 – Tilgangskontroll (IAC)",
+          "evidenceText": "Anlegget har en skriftlig policy for tilgangskontroll, men under stikkprøven finner du at tre tidligere ansatte fortsatt har aktive brukerkontoer på ingeniørarbeidsstasjonen, ni måneder etter at de sluttet.",
+          "correctVerdict": "non-compliant",
+          "correctPriority": "high",
+          "explanation": "En policy som ikke følges i praksis gir ikke reell beskyttelse. Aktive kontoer for personer som har sluttet er et alvorlig avvik — det er en åpen, ubrukt tilgangsvei inn i kontrollsystemet, og bør prioriteres høyt siden den kan utnyttes når som helst uten at noen merker det."
+        },
+        {
+          "id": "a2",
+          "requirementRef": "IEC 62443-2-1 – Patch-håndtering",
+          "evidenceText": "Anlegget har en dokumentert prosess for patching av IT-systemer, men ingen tilsvarende prosess for OT-systemene. Driftsleder forklarer at patcher til SCADA-serveren installeres «når det passer», uten testing eller dokumentasjon.",
+          "correctVerdict": "non-compliant",
+          "correctPriority": "medium",
+          "explanation": "Det finnes en prosess, men den dekker ikke OT-siden i det hele tatt, og den uformelle praksisen for SCADA mangler testing og sporbarhet. Dette er et reelt avvik, men siden patching tross alt skjer og ingen kjente hendelser er knyttet til det, vurderes prioriteten som middels snarere enn høy — det bør rettes opp systematisk, men det haster ikke som en øyeblikkelig sikkerhetsrisiko."
+        },
+        {
+          "id": "a3",
+          "requirementRef": "IEC 62443-2-1 – Restricted Data Flow / segmentering",
+          "evidenceText": "Nettverksdiagrammet viser separate soner for IT og OT, med en brannmur mellom. Stikkprøve av brannmurkonfigurasjonen bekrefter at kun nødvendige porter og protokoller er åpnet, og at all trafikk logges.",
+          "correctVerdict": "compliant",
+          "explanation": "Dokumentasjon og faktisk konfigurasjon stemmer overens: sonene er reelt atskilt, brannmuren håndhever en restriktiv policy, og det finnes logging. Dette er nettopp det kravet til begrenset dataflyt er ment å sikre."
+        },
+        {
+          "id": "a4",
+          "requirementRef": "IEC 62443-2-1 – Hendelsesrespons",
+          "evidenceText": "Det finnes en beredskapsplan for cyberhendelser, sist oppdatert for fire år siden. Planen nevner ikke OT-systemene spesifikt, og ingen ansatte kan bekrefte at den er øvd på i løpet av de siste to årene.",
+          "correctVerdict": "partial",
+          "correctPriority": "medium",
+          "explanation": "Det finnes et dokument, så kravet er ikke fullstendig fraværende — men det er utdatert, dekker ikke OT, og er aldri øvd på i praksis. En beredskapsplan som ikke er testet er i beste fall et utgangspunkt, ikke reell beredskap. Vurderes som delvis samsvar med middels prioritet for oppfølging."
+        },
+        {
+          "id": "a5",
+          "requirementRef": "IEC 62443-2-1 – Sikkerhetskopiering",
+          "evidenceText": "Sikkerhetskopiering av konfigurasjonsfiler for PLS-ene gjøres automatisk hver natt, lagres på en egen server i en annen bygning, og en gjenopprettingstest ble utført for tre uker siden med suksess.",
+          "correctVerdict": "compliant",
+          "explanation": "Dette dekker både selve sikkerhetskopieringen, fysisk atskilt lagring, og — kanskje viktigst — en nylig gjennomført og vellykket gjenopprettingstest. En backup man aldri har testet å gjenopprette fra er ikke pålitelig; her er den faktisk verifisert."
+        }
+      ]
+    },
+    {
+      "type": "audit",
+      "id": "audit-vendor-onboarding-1",
+      "siteContext": "Du reviderer sikkerhetsprogrammet til en ny automasjonsleverandør før de får tilgang til å utføre fjernvedlikehold på et industrianlegg, i tråd med kravene i IEC 62443-2-4 til tjenesteleverandører.",
+      "items": [
+        {
+          "id": "b1",
+          "requirementRef": "IEC 62443-2-4 – Fjernaksess",
+          "evidenceText": "Leverandøren ber om en fast, alltid-på VPN-tilkobling til kundens OT-nettverk, «for å slippe å be om tilgang hver gang».",
+          "correctVerdict": "non-compliant",
+          "correctPriority": "high",
+          "explanation": "En permanent, alltid-åpen fjerntilgang til OT-nettverket er nøyaktig den typen unødvendige, stående forbindelse IEC 62443 ber oss unngå. Fjernaksess bør være tidsbegrenset, godkjent for hver økt, og logget — ikke en konstant åpen dør. Høy prioritet siden dette er en direkte, permanent angrepsvei."
+        },
+        {
+          "id": "b2",
+          "requirementRef": "IEC 62443-2-4 – Personellsikkerhet",
+          "evidenceText": "Leverandøren kan dokumentere at alle teknikere som skal ha fjernaksess har gjennomført bakgrunnssjekk og signert taushetserklæring, og at tilgang trekkes tilbake automatisk når en tekniker slutter hos leverandøren.",
+          "correctVerdict": "compliant",
+          "explanation": "Dette dekker både forhåndskontroll av personell og en reell prosess for å fjerne tilgang når noen slutter — nøyaktig det som forventes av en seriøs tjenesteleverandør under IEC 62443-2-4."
+        },
+        {
+          "id": "b3",
+          "requirementRef": "IEC 62443-2-4 – Malware-beskyttelse på leverandørutstyr",
+          "evidenceText": "Leverandørens serviceteknikere bruker egne bærbare PC-er ved besøk på anlegget. Det finnes en policy om at disse skal ha oppdatert antivirus, men ingen rutine for å faktisk verifisere dette før PC-en kobles til anleggets nettverk.",
+          "correctVerdict": "partial",
+          "correctPriority": "high",
+          "explanation": "En policy finnes, men uten noen kontroll ved selve tilkoblingspunktet er den i praksis basert på tillit alene. Servicebærbare er en velkjent inngangsvei for skadevare inn i OT-miljøer, så selv om noe er på plass, mangler den kritiske verifiseringen — dette bør prioriteres høyt til tross for at det bare er et delvis avvik."
+        }
+      ]
+    },
+    {
+      "type": "audit",
+      "id": "audit-remote-plant-1",
+      "siteContext": "Du gjennomfører en oppfølgingsrevisjon av et fjernstyrt pumpeanlegg som tidligere fikk avvik knyttet til fysisk sikkerhet og logging.",
+      "items": [
+        {
+          "id": "c1",
+          "requirementRef": "IEC 62443-2-1 – Fysisk sikkerhet",
+          "evidenceText": "Døren til teknisk rom med PLS-skapet har fått nytt adgangskortsystem siden sist revisjon, og loggen viser at kun autorisert personell har hatt tilgang de siste tre månedene.",
+          "correctVerdict": "compliant",
+          "explanation": "Det tidligere avviket er lukket: adgangskontrollen er på plass, og loggen bekrefter at den faktisk fungerer i praksis, ikke bare på papiret."
+        },
+        {
+          "id": "c2",
+          "requirementRef": "IEC 62443-2-1 – Timely Response to Events",
+          "evidenceText": "Anlegget har installert et nytt loggesystem for sikkerhetshendelser, men ingen har blitt varslet om at systemet sluttet å sende varsler for tre uker siden på grunn av en full disk.",
+          "correctVerdict": "non-compliant",
+          "correctPriority": "high",
+          "explanation": "Et loggesystem som stille slutter å fungere uten at noen merker det, gir en falsk trygghetsfølelse — man tror man har oversikt, men har det ikke. Siden dette direkte svekker evnen til å oppdage og respondere på hendelser, bør det prioriteres høyt."
+        },
+        {
+          "id": "c3",
+          "requirementRef": "IEC 62443-2-1 – Use Control",
+          "evidenceText": "Operatørene deler fortsatt én felles brukerkonto på HMI-en, slik det ble påpekt i forrige revisjon, men driftsleder viser en godkjent plan med konkrete datoer for å innføre individuelle kontoer i løpet av neste kvartal.",
+          "correctVerdict": "partial",
+          "correctPriority": "medium",
+          "explanation": "Avviket fra forrige revisjon er ikke lukket ennå, men det finnes nå en konkret, tidfestet plan for å rette det opp — det er bedre enn ingenting, men fortsatt ikke i samsvar før planen faktisk er gjennomført. Middels prioritet for oppfølging ved neste revisjon."
+        }
+      ]
+    },
+    {
+      "type": "risk-calculator",
+      "id": "risk-remote-access-outage",
+      "description": "En leverandør har fjernaksess til et PLS-system for vedlikehold. Sannsynligheten for at denne tilkoblingen misbrukes vurderes som middels — det har vært lignende hendelser andre steder i bransjen — og konsekvensen ved misbruk er et kortvarig produksjonsstopp på noen timer, uten fare for personell eller miljø.",
+      "correctLikelihood": 3,
+      "correctImpact": 2,
+      "correctSLTarget": "SL2",
+      "explanation": "Her er både sannsynlighet og konsekvens moderate — ingen liv, helse eller miljø står på spill, kun et avgrenset driftsavbrudd. Et SL-target på SL2 (beskyttelse mot en angriper med enkle midler og lav motivasjon) er et rimelig ambisjonsnivå her; å kreve SL3 eller SL4 ville vært en overreaksjon i forhold til den faktiske konsekvensen."
+    },
+    {
+      "type": "risk-calculator",
+      "id": "risk-sis-tampering",
+      "description": "Et sikkerhetsinstrumentert system (SIS) ved en prosessenhet kan i teorien nås av en angriper som allerede har kompromittert det interne OT-nettverket. Sannsynligheten for at noen faktisk klarer å komme seg helt inn i SIS-sonen og manipulere den vurderes som lav, siden det krever flere separate innbrudd etter hverandre. Men dersom SIS manipuleres slik at den ikke griper inn ved et faktisk prosessavvik, kan konsekvensen bli et ukontrollert utslipp med fare for liv, helse og miljø.",
+      "correctLikelihood": 2,
+      "correctImpact": 5,
+      "correctSLTarget": "SL4",
+      "explanation": "Dette er et klassisk eksempel på at man IKKE skal la lav sannsynlighet alene styre SL-target når konsekvensen er så alvorlig. Et sikkerhetsinstrumentert system som skal beskytte liv, helse og miljø (HSE) bør ha det høyeste sikkerhetsnivået (SL4) uavhengig av at et vellykket angrep krever flere steg — nettopp fordi konsekvensen ved svikt er katastrofal og irreversibel. Å sette SL-target basert på et gjennomsnitt eller produkt av sannsynlighet og konsekvens ville undervurdert risikoen kraftig her."
+    },
+    {
+      "type": "risk-calculator",
+      "id": "risk-historian-data-leak",
+      "description": "En historian-server samler driftsdata fra hele anlegget og er tilgjengelig fra kontornettverket for rapportering. Sannsynligheten for at noen får uautorisert lesetilgang til denne vurderes som relativt høy, siden mange ansatte har tilgang og passordrutinene er svake. Konsekvensen ved lekkasje er tap av interne produksjonstall og prosessdata — ubehagelig og et brudd på interne rutiner, men ikke noe som påvirker selve produksjonen, sikkerheten eller miljøet.",
+      "correctLikelihood": 4,
+      "correctImpact": 1,
+      "correctSLTarget": "SL1",
+      "explanation": "Sannsynligheten er høy, men konsekvensen er lav — dette er rent informasjonstap uten fysiske eller driftsmessige følger. Her er det riktig å la den lave konsekvensen dominere vurderingen: et høyt SL-target ville vært unødvendig ressursbruk i forhold til den faktiske risikoen. SL1 (beskyttelse mot tilfeldig eller uforvarende brudd) er tilstrekkelig; problemet bør heller løses med bedre passordrutiner enn med et urealistisk høyt sikkerhetsnivå."
+    }
+  ]
+}

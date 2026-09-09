@@ -1,0 +1,32 @@
+{
+  "startMoney": 1200,
+  "baseProductionRate": 12,
+  "plantDamagePerBreach": 10,
+  "installation": {
+    "installDelaySeconds": 3
+  },
+  "production": {
+    "haltSecondsPerChange": 4,
+    "shipmentIntervalSeconds": 5
+  },
+  "depreciation": {
+    "freshRefundRatio": 0.85,
+    "minRefundRatio": 0.25,
+    "fullDepreciationSeconds": 45
+  },
+  "combat": {
+    "dpsPerBlockChance": 150
+  },
+  "waves": [
+    { "attackerCount": 4, "attackerSpeed": 40, "attackerHealth": 80, "spawnIntervalMs": 1900, "entryPointIds": ["office-entry", "wan-entry"] },
+    { "attackerCount": 6, "attackerSpeed": 48, "attackerHealth": 130, "spawnIntervalMs": 1600, "entryPointIds": ["office-entry", "wan-entry"] },
+    { "attackerCount": 9, "attackerSpeed": 55, "attackerHealth": 190, "spawnIntervalMs": 1300, "entryPointIds": ["office-entry", "wan-entry", "dmz-bypass", "backbone-bypass"] },
+    { "attackerCount": 12, "attackerSpeed": 62, "attackerHealth": 260, "spawnIntervalMs": 1050, "entryPointIds": ["office-entry", "wan-entry", "dmz-bypass", "backbone-bypass", "hall1-bypass", "hall2-bypass", "hall3-bypass", "remote-service-bypass", "wlan-tablet-entry"] },
+    { "attackerCount": 16, "attackerSpeed": 72, "attackerHealth": 340, "spawnIntervalMs": 850, "entryPointIds": ["office-entry", "wan-entry", "dmz-bypass", "backbone-bypass", "hall1-bypass", "hall2-bypass", "hall3-bypass", "remote-service-bypass", "wlan-tablet-entry", "removable-media-entry", "iot-shortcut-entry"] }
+  ],
+  "scoring": {
+    "healthWeight": 10,
+    "moneyWeight": 1,
+    "stoppedAttackerWeight": 20
+  }
+}

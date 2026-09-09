@@ -1,0 +1,684 @@
+{
+  "components": [
+    {
+      "id": "industrial-firewall",
+      "name": "Industriell brannmur",
+      "category": "segmentation",
+      "profileText": "Kontrollerer trafikk mellom to soner. Slipper bare gjennom det som er eksplisitt tillatt, og blokkerer resten. Grunnsteinen i sone/conduit-modellen.",
+      "primaryFR": "FR5",
+      "secondaryFRs": [
+        "FR2"
+      ],
+      "baseCost": 300,
+      "unlockedAtLevel": 1,
+      "range": 2,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Grunnregelsett",
+          "cost": 0,
+          "effectDescription": "Blokkerer 60% av kjente angrepsforsøk",
+          "effectValues": {
+            "blockChance": 0.6
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Finjustert regelsett",
+          "cost": 250,
+          "effectDescription": "Blokkerer 80%. Reduserer falske positiver",
+          "effectValues": {
+            "blockChance": 0.8
+          }
+        },
+        {
+          "tier": 3,
+          "name": "OT-protokollinspeksjon (DPI)",
+          "cost": 500,
+          "effectDescription": "Blokkerer 92%. Forstår industrielle protokoller og oppdager manipulerte kommandoer",
+          "effectValues": {
+            "blockChance": 0.92
+          }
+        }
+      ],
+      "placementKind": "edge"
+    },
+    {
+      "id": "managed-switch",
+      "name": "Administrert svitsj (VLAN-segmentering)",
+      "category": "segmentation",
+      "profileText": "Deler et flatt nettverk i logiske segmenter. Hindrer at en kompromittert enhet fritt kan nå alle andre på samme nettverk.",
+      "primaryFR": "FR5",
+      "secondaryFRs": [
+        "FR1"
+      ],
+      "baseCost": 150,
+      "unlockedAtLevel": 1,
+      "range": 2,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "VLAN-oppdeling",
+          "cost": 0,
+          "effectDescription": "Bremser lateral bevegelse med 40%",
+          "effectValues": {
+            "slowFactor": 0.6
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Portsikkerhet",
+          "cost": 200,
+          "effectDescription": "Bremser 65%. Blokkerer ukjente enheter som kobles til",
+          "effectValues": {
+            "slowFactor": 0.35
+          }
+        },
+        {
+          "tier": 3,
+          "name": "802.1X portautentisering",
+          "cost": 400,
+          "effectDescription": "Bremser 85%. Kun autentiserte enheter får nettverkstilgang",
+          "effectValues": {
+            "slowFactor": 0.15
+          }
+        }
+      ],
+      "placementKind": "edge"
+    },
+    {
+      "id": "data-diode",
+      "name": "Data-diode (unidireksjonell gateway)",
+      "category": "segmentation",
+      "profileText": "Fysisk enveis dataoverføring. Data kan gå ut, men ingenting kan komme inn. Uslåelig i sin retning, men kan ikke brukes der toveis kommunikasjon kreves.",
+      "primaryFR": "FR5",
+      "secondaryFRs": [
+        "FR3"
+      ],
+      "baseCost": 900,
+      "unlockedAtLevel": 3,
+      "range": 2,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Enveis dataflyt",
+          "cost": 0,
+          "effectDescription": "100% blokkering innover. Kun på conduits merket \"eksport\"",
+          "effectValues": {
+            "blockChance": 1
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Med protokollbrudd",
+          "cost": 400,
+          "effectDescription": "Fjerner også innebygde protokollsårbarheter i datastrømmen",
+          "effectValues": {
+            "blockChance": 1
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Med innholdsvalidering",
+          "cost": 600,
+          "effectDescription": "Validerer at utgående data ikke lekker sensitiv informasjon",
+          "effectValues": {
+            "blockChance": 1
+          }
+        }
+      ],
+      "placementKind": "edge"
+    },
+    {
+      "id": "industrial-dmz",
+      "name": "Industriell DMZ",
+      "category": "segmentation",
+      "profileText": "Et mellomliggende nettverkslag mellom IT og OT. Ingen trafikk går direkte mellom kontornettet og produksjonen — alt må stoppe i DMZ-en først.",
+      "primaryFR": "FR5",
+      "secondaryFRs": [],
+      "baseCost": 600,
+      "unlockedAtLevel": 3,
+      "range": 2,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Grunnleggende DMZ",
+          "cost": 0,
+          "effectDescription": "Stopper 70% av lateral bevegelse fra IT til OT",
+          "effectValues": {
+            "blockChance": 0.7
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Med replikerte tjenester",
+          "cost": 450,
+          "effectDescription": "85%. OT-data speiles i DMZ, ingen direkte OT-oppslag fra IT",
+          "effectValues": {
+            "blockChance": 0.85
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Med brokerbasert dataflyt",
+          "cost": 700,
+          "effectDescription": "95%. All dataflyt går via mellomledd som validerer innhold",
+          "effectValues": {
+            "blockChance": 0.95
+          }
+        }
+      ],
+      "placementKind": "edge"
+    },
+    {
+      "id": "jump-host",
+      "name": "Jump host / bastion-vert",
+      "category": "access",
+      "profileText": "Eneste inngangsport for administrativ tilgang inn i OT-nettverket. All fjerntilgang må gå via denne, som kan overvåkes og kontrolleres.",
+      "primaryFR": "FR1",
+      "secondaryFRs": [
+        "FR2",
+        "FR6"
+      ],
+      "baseCost": 400,
+      "unlockedAtLevel": 2,
+      "range": 1,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Sentralisert tilgangspunkt",
+          "cost": 0,
+          "effectDescription": "Blokkerer 50% av angrep via stjålne kontoer",
+          "effectValues": {
+            "blockChance": 0.5
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Med multifaktorautentisering",
+          "cost": 350,
+          "effectDescription": "85%. Stjålet passord alene er ikke nok",
+          "effectValues": {
+            "blockChance": 0.85
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Med sesjonsopptak og godkjenning",
+          "cost": 550,
+          "effectDescription": "92%. All aktivitet logges; tilgang må godkjennes i sanntid",
+          "effectValues": {
+            "blockChance": 0.92
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "vpn-gateway",
+      "name": "VPN-gateway (fjerntilgang)",
+      "category": "access",
+      "profileText": "Kryptert tunnel for leverandører og fjernarbeid. Beskytter trafikken i transitt, men er selv et angrepsmål hvis den ikke er herdet.",
+      "primaryFR": "FR1",
+      "secondaryFRs": [
+        "FR4"
+      ],
+      "baseCost": 350,
+      "unlockedAtLevel": 2,
+      "range": 1,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Kryptert tunnel",
+          "cost": 0,
+          "effectDescription": "Beskytter mot avlytting. Selv sårbar for kontokompromittering",
+          "effectValues": {
+            "blockChance": 0.35
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Med MFA og tidsbegrenset tilgang",
+          "cost": 300,
+          "effectDescription": "Tilgang åpnes kun i avtalte vinduer",
+          "effectValues": {
+            "blockChance": 0.6
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Zero-trust tilgang per ressurs",
+          "cost": 600,
+          "effectDescription": "Leverandør når kun den ene maskinen de skal, ikke hele nettet",
+          "effectValues": {
+            "blockChance": 0.8
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "auth-server",
+      "name": "Autentiseringsserver (sentral identitetshåndtering)",
+      "category": "access",
+      "profileText": "Sentraliserer brukerkontoer og rettigheter. Uten dette har anlegget delte passord og kontoer som aldri deaktiveres.",
+      "primaryFR": "FR1",
+      "secondaryFRs": [
+        "FR2"
+      ],
+      "baseCost": 450,
+      "unlockedAtLevel": 1,
+      "range": 1,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Sentrale kontoer",
+          "cost": 0,
+          "effectDescription": "Fjerner delte kontoer. Blokkerer 45% av innsider-/kontoangrep",
+          "effectValues": {
+            "blockChance": 0.45
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Rollebasert tilgangskontroll",
+          "cost": 350,
+          "effectDescription": "70%. Hver rolle får kun nødvendige rettigheter",
+          "effectValues": {
+            "blockChance": 0.7
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Privilegert tilgangsstyring (PAM)",
+          "cost": 550,
+          "effectDescription": "88%. Administratorrettigheter tildeles midlertidig ved behov",
+          "effectValues": {
+            "blockChance": 0.88
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "ids-ips",
+      "name": "IDS/IPS-sensor",
+      "category": "detection",
+      "profileText": "Overvåker nettverkstrafikk og varsler om mistenkelig aktivitet. Stopper ikke nødvendigvis angrepet selv, men gir deg sjansen til å reagere i tide.",
+      "primaryFR": "FR6",
+      "secondaryFRs": [
+        "FR3"
+      ],
+      "baseCost": 200,
+      "unlockedAtLevel": 2,
+      "range": 2,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Signaturbasert deteksjon",
+          "cost": 0,
+          "effectDescription": "Oppdager 60% av kjente angrep. Blind for nye varianter",
+          "effectValues": {
+            "detectChance": 0.6
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Anomalibasert deteksjon",
+          "cost": 400,
+          "effectDescription": "80%. Lærer normal trafikk og reagerer på avvik",
+          "effectValues": {
+            "detectChance": 0.8
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Aktiv blokkering (IPS-modus)",
+          "cost": 500,
+          "effectDescription": "88% og stopper angrepet automatisk i stedet for bare å varsle",
+          "effectValues": {
+            "detectChance": 0.88
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "siem",
+      "name": "Loggsamler / SIEM",
+      "category": "detection",
+      "profileText": "Samler logger fra hele anlegget på ett sted og korrelerer hendelser. Gjør at man ser mønsteret i angrep som ellers ser ut som enkeltstående småfeil.",
+      "primaryFR": "FR6",
+      "secondaryFRs": [],
+      "baseCost": 350,
+      "unlockedAtLevel": 3,
+      "range": 2,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Sentral logginnsamling",
+          "cost": 0,
+          "effectDescription": "Halverer tiden det tar å oppdage et pågående angrep",
+          "effectValues": {
+            "detectChance": 0.25
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Med korrelasjonsregler",
+          "cost": 400,
+          "effectDescription": "Oppdager sammensatte angrep som går over flere systemer",
+          "effectValues": {
+            "detectChance": 0.5
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Med automatisert respons",
+          "cost": 650,
+          "effectDescription": "Iverksetter forhåndsdefinerte tiltak umiddelbart ved deteksjon",
+          "effectValues": {
+            "detectChance": 0.7
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "endpoint-protection",
+      "name": "Endepunktsbeskyttelse / applikasjonshvitliste",
+      "category": "detection",
+      "profileText": "Hindrer at ukjent programvare kjører på ingeniørstasjoner og HMI-er. På OT-utstyr er hvitlisting ofte bedre enn tradisjonell antivirus.",
+      "primaryFR": "FR3",
+      "secondaryFRs": [
+        "FR6"
+      ],
+      "baseCost": 250,
+      "unlockedAtLevel": 1,
+      "range": 1,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Antivirus/antimalware",
+          "cost": 0,
+          "effectDescription": "Blokkerer 55% av skadevare",
+          "effectValues": {
+            "blockChance": 0.55
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Applikasjonshvitliste",
+          "cost": 350,
+          "effectDescription": "82%. Kun godkjent programvare kan kjøre",
+          "effectValues": {
+            "blockChance": 0.82
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Med integritetsovervåking",
+          "cost": 450,
+          "effectDescription": "90%. Varsler ved uautoriserte endringer i systemfiler",
+          "effectValues": {
+            "blockChance": 0.9
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "patch-server",
+      "name": "Patch-/oppdateringsserver",
+      "category": "integrity",
+      "profileText": "Distribuerer sikkerhetsoppdateringer kontrollert til OT-utstyr. I OT kan man ikke bare oppdatere automatisk — det må testes og planlegges.",
+      "primaryFR": "FR3",
+      "secondaryFRs": [],
+      "baseCost": 300,
+      "unlockedAtLevel": 1,
+      "range": 1,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Manuell distribusjon",
+          "cost": 0,
+          "effectDescription": "Reduserer sårbarhetsvinduet med 30%",
+          "effectValues": {
+            "blockChance": 0.3
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Med teststadium",
+          "cost": 350,
+          "effectDescription": "60%. Oppdateringer verifiseres før produksjonssetting",
+          "effectValues": {
+            "blockChance": 0.6
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Med sårbarhetsskanning",
+          "cost": 500,
+          "effectDescription": "80%. Identifiserer hva som faktisk må prioriteres",
+          "effectValues": {
+            "blockChance": 0.8
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "backup-recovery",
+      "name": "Sikkerhetskopiering og gjenoppretting",
+      "category": "integrity",
+      "profileText": "Stopper ikke angrep, men avgjør hvor lenge anlegget står stille etterpå. Mot løsepengevirus er dette ofte det som redder produksjonen.",
+      "primaryFR": "FR7",
+      "secondaryFRs": [],
+      "baseCost": 300,
+      "unlockedAtLevel": 1,
+      "range": 1,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Regelmessig sikkerhetskopi",
+          "cost": 0,
+          "effectDescription": "Halverer nedetid etter vellykket angrep",
+          "effectValues": {
+            "blockChance": 0.2
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Frakoblet/uforanderlig kopi",
+          "cost": 400,
+          "effectDescription": "Kopien kan ikke krypteres av angriperen",
+          "effectValues": {
+            "blockChance": 0.45
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Testet gjenopprettingsplan",
+          "cost": 450,
+          "effectDescription": "Nedetiden reduseres til et minimum — planen er faktisk øvd på",
+          "effectValues": {
+            "blockChance": 0.65
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "pki-certificates",
+      "name": "PKI / sertifikathåndtering (TLS på conduits)",
+      "category": "integrity",
+      "profileText": "Krypterer og autentiserer kommunikasjon mellom komponenter. Hindrer avlytting og at noen utgir seg for å være en legitim enhet.",
+      "primaryFR": "FR4",
+      "secondaryFRs": [
+        "FR1",
+        "FR3"
+      ],
+      "baseCost": 400,
+      "unlockedAtLevel": 3,
+      "range": 1,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "TLS-kryptering",
+          "cost": 0,
+          "effectDescription": "Blokkerer avlytting på conduits",
+          "effectValues": {
+            "blockChance": 0.3
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Gjensidig autentisering (mTLS)",
+          "cost": 400,
+          "effectDescription": "Begge sider må bevise identitet — stopper falske enheter",
+          "effectValues": {
+            "blockChance": 0.55
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Automatisert sertifikatrullering",
+          "cost": 350,
+          "effectDescription": "Fjerner risikoen ved utløpte/kompromitterte sertifikater",
+          "effectValues": {
+            "blockChance": 0.75
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "redundant-control",
+      "name": "Redundant styring / failover",
+      "category": "integrity",
+      "profileText": "Reserveenhet som overtar hvis primærsystemet settes ut av spill. Holder produksjonen i gang under angrep.",
+      "primaryFR": "FR7",
+      "secondaryFRs": [],
+      "baseCost": 700,
+      "unlockedAtLevel": 4,
+      "range": 1,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Kald reserve",
+          "cost": 0,
+          "effectDescription": "Produksjon gjenopptas etter manuell omkobling",
+          "effectValues": {
+            "blockChance": 0.25
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Varm reserve",
+          "cost": 500,
+          "effectDescription": "Automatisk omkobling ved feil",
+          "effectValues": {
+            "blockChance": 0.55
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Full redundans",
+          "cost": 800,
+          "effectDescription": "Ingen merkbar nedetid ved angrep på én node",
+          "effectValues": {
+            "blockChance": 0.8
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "physical-access-control",
+      "name": "Fysisk adgangskontroll",
+      "category": "physical",
+      "profileText": "Låste skap og adgangskontrollerte rom. Alle nettverkstiltak er verdiløse hvis noen kan koble seg rett på svitsjen med en kabel.",
+      "primaryFR": "FR1",
+      "secondaryFRs": [
+        "FR2"
+      ],
+      "baseCost": 200,
+      "unlockedAtLevel": 1,
+      "range": 1,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Låste skap",
+          "cost": 0,
+          "effectDescription": "Blokkerer 50% av fysiske/innsiderangrep",
+          "effectValues": {
+            "blockChance": 0.5
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Adgangskontroll med logging",
+          "cost": 300,
+          "effectDescription": "75%. Man vet hvem som var hvor og når",
+          "effectValues": {
+            "blockChance": 0.75
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Med kameraovervåking og alarm",
+          "cost": 400,
+          "effectDescription": "88%. Uautorisert adgang oppdages umiddelbart",
+          "effectValues": {
+            "blockChance": 0.88
+          }
+        }
+      ],
+      "placementKind": "node"
+    },
+    {
+      "id": "removable-media-control",
+      "name": "Kontroll av flyttbare medier",
+      "category": "physical",
+      "profileText": "Sperrer eller kontrollerer USB-porter og annen flyttbar lagring. En av de vanligste smitteveiene inn i nettverk uten internettilkobling.",
+      "primaryFR": "FR3",
+      "secondaryFRs": [
+        "FR2"
+      ],
+      "baseCost": 150,
+      "unlockedAtLevel": 1,
+      "range": 1,
+      "upgrades": [
+        {
+          "tier": 1,
+          "name": "Fysiske portlåser",
+          "cost": 0,
+          "effectDescription": "Blokkerer 55% av USB-baserte angrep",
+          "effectValues": {
+            "blockChance": 0.55
+          }
+        },
+        {
+          "tier": 2,
+          "name": "Programvarebasert portkontroll",
+          "cost": 250,
+          "effectDescription": "78%. Kun godkjente enheter tillates",
+          "effectValues": {
+            "blockChance": 0.78
+          }
+        },
+        {
+          "tier": 3,
+          "name": "Med skannestasjon",
+          "cost": 350,
+          "effectDescription": "90%. Alle medier kontrolleres før bruk i anlegget",
+          "effectValues": {
+            "blockChance": 0.9
+          }
+        }
+      ],
+      "placementKind": "node"
+    }
+  ]
+}
