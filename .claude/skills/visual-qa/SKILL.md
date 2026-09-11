@@ -25,10 +25,30 @@ Run this after any non-trivial change to: factory geometry/components
 (`industrial-game-ui`). Skip it only for changes with no visual/behavioral
 surface at all (e.g. pure data/type refactors with no rendering change).
 
-Use the project's own dev workflow to build/run (check `package.json` — this
-repo uses `npm run dev` via Vite; see the `run` skill if one is available for
-launching and screenshotting the app). Drive the browser with Playwright
-(pre-installed in this environment — do not run `playwright install`).
+Run `npm run visual-qa` (`scripts/visual-qa/run.mjs`) as the default driver
+rather than writing one-off Playwright scripts per check — it starts the
+Vite dev server if nothing is already listening, walks every scenario in
+`scripts/visual-qa/config.mjs`, and writes screenshots plus a `report.md`/
+`report.json` to `scripts/visual-qa/out/<timestamp>/`. It automates what's
+mechanically checkable per scenario: console errors, DOM/SVG node counts,
+horizontal-scroll detection, a screenshot at each viewport in §7, a
+reduced-motion screenshot, a crude frame-diff "is anything visibly
+animating" signal (§4), a tab-order focus-visibility pass (§9), a JS-heap
+sample (§8), and — when a scenario sets `interactiveSelector` — a
+hover/click pass on a sample of matching elements.
+
+**Add a scenario in `config.mjs` for every new route/scene** (the isometric
+factory game will need one once it has a route) rather than running the
+script against a hardcoded page — that's the whole point of it being
+config-driven instead of a hand-typed script per feature.
+
+What it does **not** replace: perspective/visual-consistency/layering
+(§1-3), camera/LOD correctness (§6), and gameplay readability (§10) are
+judged by looking at the screenshots it produces, not by a metric — read
+the report, then open the actual `.png` files for the categories that need
+eyes, not just the pass/fail issue list. Use the script's own
+`--scenario=<name>` flag to focus a single page while iterating, and
+`--keep-server` if you want the dev server left running afterward.
 
 ## Validation categories
 
