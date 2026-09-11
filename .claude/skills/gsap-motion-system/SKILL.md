@@ -31,26 +31,79 @@ exports:
    or id) and return a GSAP tween/timeline. Presets own their own duration
    and easing defaults from the scale below; callers can override only when
    there's a real reason.
-2. **A registry keyed by object `id`** so a running animation for a given
-   object can be looked up and killed/replaced instead of stacking — critical
-   for state transitions (e.g., an object going `WARNING` → `COMPROMISED`
-   must kill the warning pulse before starting the critical one).
+2. **A channel-keyed registry**, not a flat per-object one. A single object
+   legitimately runs *several* animations at once that must not interrupt
+   each other — a `machineIdle` loop, a `state` overlay pulse, and a hover
+   highlight are three different concerns on the same object (see
+   `industrial-visual-design` §D/§E: base geometry, state overlay, and
+   interaction highlight are separate elements precisely so their animations
+   don't collide). Key the registry by `` `${id}:${channel}` ``, with a fixed
+   channel set:
+   - `idle` — ambient motion (`machineIdle`, `robotIdle`, `conveyorMovement`,
+     LED blink). Runs continuously while the object is mounted at a detail
+     level that renders it individually (see `svg-factory-architecture` →
+     Camera & Level of Detail) — not touched by state or interaction changes.
+   - `state` — the state-overlay animation (`warning`, `criticalAlert`,
+     `isolation`, `recovery`, `glow`/`secure` pulse). A state change kills
+     and replaces **only this channel**, never `idle` or `interaction`.
+   - `interaction` — `hover`/`selection`. Independent of both of the above;
+     an object stays mid-`criticalAlert` while also showing a hover ring.
+   - `sequence` — a multi-step event timeline (see "Event-driven animation"),
+     usually spanning several objects' `state` channels rather than living on
+     one object alone.
+
+   Route every play through one small helper rather than calling
+   `gsap.to`/`gsap.timeline` directly in a component:
+
+   ```ts
+   // src/game/motion/registry.ts
+   const active = new Map<string, gsap.core.Timeline>();
+
+   export function playOnChannel(
+     id: string,
+     channel: "idle" | "state" | "interaction" | "sequence",
+     build: () => gsap.core.Timeline,
+   ) {
+     const key = `${id}:${channel}`;
+     active.get(key)?.kill();
+     const tl = build();
+     active.set(key, tl);
+     return tl;
+   }
+   ```
+
+   This single function is what makes presets/timeline builders "restartable
+   and composable" (principle 6) without every call site reimplementing
+   kill-then-play.
 3. **Timeline builders** for multi-step sequences (see "Event-driven
    animation" below).
+4. **Plugin registration, once.** Register any non-core GSAP plugins used
+   (e.g. `MotionPathPlugin` for `networkPacket`) at module init in this same
+   file, via `gsap.registerPlugin(...)` — never scattered per-component
+   `registerPlugin` calls, which are easy to duplicate or forget.
 
 Example preset shape (illustrative, adapt to the actual codebase's
-conventions when implementing):
+conventions when implementing). Note it animates `opacity`/`scale` on a
+pre-existing glow overlay element, not the `filter` property — animating
+`filter` is expensive (it's not a compositor-only property) and directly
+violates principle 8 below; a cheap glow is a duplicate, blurred shape
+(via a static SVG `<filter>` applied once, not animated) whose *opacity* or
+*scale* is what GSAP tweens:
 
 ```ts
 // src/game/motion/presets.ts
-export function pulse(target: gsap.TweenTarget, color: string) {
-  return gsap.to(target, {
-    filter: `drop-shadow(0 0 6px ${color})`,
-    duration: MOTION.small / 1000,
-    ease: "sine.inOut",
-    yoyo: true,
-    repeat: -1,
-  });
+export function pulse(id: string, glowTarget: gsap.TweenTarget) {
+  return playOnChannel(id, "state", () =>
+    gsap.timeline().to(glowTarget, {
+      opacity: 1,
+      scale: 1.08,
+      duration: MOTION.small / 1000,
+      ease: "sine.inOut",
+      yoyo: true,
+      repeat: -1,
+      transformOrigin: "center",
+    }),
+  );
 }
 ```
 
@@ -106,14 +159,25 @@ rather than bypassing it:
 
 ### 1. Subtle idle motion — the factory is alive by default
 
-Every persistent, visible object plays a low-amplitude idle animation as
-soon as it mounts in `NORMAL`/`SECURE` state: conveyors move, robots
-idle-cycle, LEDs blink, network packets travel, scanners sweep on their own
-cadence, people have a subtle idle sway/blink. This is not optional polish —
-a factory with static geometry and only reactive animation fails the game's
-core premise. Keep idle motion cheap (transform/opacity only, long loop
-periods) so dozens of simultaneous idles don't cost performance — see
-principle 8.
+Every persistent, visible object plays a low-amplitude idle animation on its
+`idle` channel as soon as it mounts in `NORMAL`/`SECURE` state: conveyors
+move, robots idle-cycle, LEDs blink, network packets travel, scanners sweep
+on their own cadence, people have a subtle idle sway/blink. This is not
+optional polish — a factory with static geometry and only reactive animation
+fails the game's core premise. Keep idle motion cheap (transform/opacity
+only, long loop periods) so dozens of simultaneous idles don't cost
+performance — see principle 8.
+
+"Every object" means every object actually *mounted as an individual
+component* — which, per `svg-factory-architecture`'s Camera & Level of
+Detail system, is only the objects inside the current focus/zone, not the
+whole plant. An unfocused zone renders as one aggregate shape with one
+zone-level status indicator, not dozens of individually idling machines
+off-camera — that aggregate indicator is what "idle" means at `overview`
+detail. This is what keeps principle 1 from contradicting the "don't run
+hundreds of simultaneous animations" guidance in principle 8 and in
+`svg-factory-architecture`'s PixiJS-evaluation triggers: idle motion scales
+with what's currently in focus, not with total plant size.
 
 ### 2. Event-driven animation — build timelines for sequences
 
@@ -163,9 +227,12 @@ way a one-shot transition is) — don't default to arbitrary numbers.
 
 ### 5. Camera movement
 
-Factory navigation is a `cameraTransition` (Cinematic band) driving the
-scene root's pan/zoom, sequenced with a `levelTransition` for the revealed
-detail scene:
+Factory navigation is a `cameraTransition` (Cinematic band) that tweens
+**one thing**: the camera group's transform (`x`, `y`, `zoom` — see
+`svg-factory-architecture`'s Camera & Level of Detail section), not
+individual objects' positions. Objects mount/unmount or swap LOD tier in
+response to the camera state settling on a new `focus`, sequenced with a
+`levelTransition` for the revealed detail scene:
 
 ```
 Overview → cameraTransition (zoom toward selected level)
@@ -180,20 +247,28 @@ rewinding the same motion.
 - Every component that starts a GSAP tween/timeline on mount must kill it on
   unmount (`useEffect` cleanup calling `.kill()`, or `gsap.context()` scoped
   to the component and reverted on cleanup — prefer `gsap.context()` for
-  anything with multiple targets).
-- Animations must be **restartable and composable**: use the id-keyed
-  registry (see architecture above) so a new state transition kills the
-  previous animation for that object before starting the next, rather than
-  layering tweens on the same property.
+  anything with multiple targets). This applies per channel: an object
+  unmounting (e.g. its zone leaves LOD `zone`/`detail` and collapses back to
+  an `overview` aggregate) must kill all of its channels' timelines, not just
+  the one that happened to be running when the code was written.
+- Animations must be **restartable and composable**: always go through
+  `playOnChannel` (see architecture above) so a new animation on a given
+  channel kills the previous one for that object+channel before starting the
+  next, rather than layering tweens on the same property. Two different
+  channels on the same object are expected to run simultaneously — that's
+  the point of channels, not a bug to guard against.
 - State-aware: a preset/timeline should read the object's current `state`
   (from the data model in `svg-factory-architecture`) to decide whether to
   even play — don't let a stale timeline fire after state has moved on.
 
 ### 7. Reduced motion
 
-Respect `prefers-reduced-motion`. Centralize the check once (a single hook/
-helper, e.g. `useReducedMotion()`) rather than checking `matchMedia` per
-component. When active:
+Respect `prefers-reduced-motion`. Use GSAP's own `gsap.matchMedia()` to gate
+presets/timelines centrally in the motion module (in the same file as the
+registry) rather than building a bespoke reduced-motion hook and threading it
+through every component — GSAP already ties `matchMedia` queries into its
+context/cleanup lifecycle, which is one less hand-rolled abstraction to keep
+in sync with principle 6. When the reduced-motion query is active:
 - Kill/skip idle and ambient loops (conveyors, LED blinks, idle sway) or
   drop them to a near-static single state — the scene must still visually
   communicate state via color/shape per `industrial-visual-design` (state

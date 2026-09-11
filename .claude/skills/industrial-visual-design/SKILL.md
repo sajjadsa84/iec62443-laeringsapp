@@ -30,17 +30,30 @@ make objects drift out of grid alignment — never use them for factory geometry
   floor-plane axes, z is height — and converted to 2D screen coordinates through
   **one shared projection function**, e.g. `isoToScreen(x, y, z)`. Never hand-roll
   a one-off transform in a single component.
-- Standard projection: 2 screen px horizontal : 1 screen px vertical per grid
-  step, at a fixed 26.57° angle. Do not vary the angle per object.
-- 1 grid unit = 32 screen px at default zoom (matches `svg-factory-architecture`'s
-  grid). All object sizes are expressed in grid units, not raw pixels, so
-  everything stays proportionate when the scene scales.
-- Every object sits on the same floor grid and faces the same two visible
-  directions (front-right face, front-left face, top face). **Never rotate an
-  individual object independently** to fake variety — vary silhouette, not
-  orientation. A robot arm, a server rack, and a building corner all share the
-  same axis system.
-- Fixed light source: top-left. Apply it consistently via face shading (see D).
+- Standard projection, exact formula (1 grid unit = 32 screen px at default
+  zoom, matching `svg-factory-architecture`'s grid — this is the concrete
+  spec `isoToScreen` implements, not a value to re-derive per component):
+  ```
+  screenX = (x - y) * 16   // half of 32: one grid step along x or y moves 16px horizontally
+  screenY = (x + y) * 8 - z * 32  // 8 = quarter of 32 (2:1 ratio); z moves straight up
+  ```
+  All object sizes and positions are expressed in grid units, not raw pixels,
+  so everything stays proportionate when the scene scales or the camera zooms
+  (see `svg-factory-architecture` → Camera & Level of Detail).
+- Every object sits on the same floor grid and is drawn with the same three
+  visible faces (top, left/front, right/side per §D) — never skewed or drawn
+  at a custom angle. **Objects do not arbitrarily rotate or tilt.** They may,
+  however, take one of a small set of discrete **facings** where the object
+  type calls for it (a conveyor turning a corner, a robot arm oriented toward
+  a machine, a building entrance on a given side): pick from the grid's four
+  cardinal facings (`+x`, `-x`, `+y`, `-y`) by mirroring/selecting a
+  pre-authored variant of the same primitive, never by rotating or skewing
+  the shape freely. A `facing` prop with those four literal values is the
+  correct implementation; a free-form rotation value in degrees is not.
+- Fixed light source: top-left. Apply it consistently via face shading (see D)
+  — face shading is relative to the *screen*, not the object's facing, so a
+  mirrored object still shades top-lightest/right-darkest exactly like its
+  unmirrored counterpart.
 
 ## B. Geometry rules
 
@@ -104,10 +117,19 @@ base color, from a fixed top-left light:
 - Top face: base color, unmodified (lightest).
 - Left/front face: base darkened ~15%.
 - Right/side face: base darkened ~30%.
-- Optional 1.5px lighter stroke on the top-front edge only (the bevel highlight).
+- Standard 1.5px lighter stroke on the top-front edge (the bevel highlight) —
+  this is part of the base treatment for every raised block, not an optional
+  extra a component can skip.
 
 Apply this identically to every block-based object — machines, buildings,
 crates, cabinets. Do not invent alternate lighting angles per object.
+
+This shading is on the object's **static base geometry** only — it never
+animates. Anything that needs to move or pulse (a state glow, a hover
+highlight) is a separate overlay element on top of the shaded base, per §E —
+GSAP never tweens the base fill/stroke colors directly (see
+`gsap-motion-system`, which depends on this separation to avoid state and
+idle/interaction animations fighting over the same element).
 
 ## E. State representation
 
@@ -125,10 +147,20 @@ treatment reused everywhere — never invent a per-object variant:
 | `RECOVERING` | cyan → teal ramp | scanning sweep animation, progress-style fill returning color |
 | `SECURE` | teal/emerald `#34D399` | steady soft glow, calm idle motion, occasional confirming pulse on state entry only |
 
-Implementation contract (see `svg-factory-architecture` for the data model):
-state is a single enum prop driving color, outline, and which animation preset
-plays (see `gsap-motion-system`) — never hard-code a color or animation choice
-per component instance.
+Implementation contract (see `svg-factory-architecture` for the data model and
+its Camera & Level-of-Detail section): `state` is a single prop driving which
+of the above treatments renders and which animation preset plays (see
+`gsap-motion-system`) — never hard-code a color or animation choice per
+component instance.
+
+Critically, state is rendered as a **separate overlay** (outline, glow, badge,
+particle layer) drawn on top of the object's unchanged structural geometry
+(§D) — never by mutating the base shape's own fill/stroke. This keeps two
+concerns independently animatable without collision: the base geometry never
+animates its own color, and the state overlay owns exactly one GSAP animation
+channel (`state`, see `gsap-motion-system`) that a state change replaces
+wholesale, without touching the object's separate idle-motion or
+hover/selection channels.
 
 ## F. Cybersecurity visualization vocabulary
 

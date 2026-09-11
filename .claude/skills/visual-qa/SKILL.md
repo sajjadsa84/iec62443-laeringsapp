@@ -62,6 +62,12 @@ launching and screenshotting the app). Drive the browser with Playwright
 - Do simultaneous animations conflict — e.g. does a state transition leave
   two competing tweens fighting over the same property instead of the old
   one being killed first (`gsap-motion-system` principle 6)?
+- Channel separation: trigger a state change (e.g. `NORMAL` → `WARNING`) on
+  an object mid-idle-cycle and confirm its idle motion (breathing, conveyor
+  movement) keeps running *while* the new state overlay animates in — a
+  state change should never visibly freeze or reset idle motion. If it does,
+  something is playing on the wrong channel (see `gsap-motion-system` →
+  channel-keyed registry).
 - Do event-driven sequences (attack → isolation → recovery) play in the
   correct order and reach a stable end state, not get stuck mid-timeline?
 - Do animations actually stop when they should — navigate away from/unmount
@@ -83,15 +89,33 @@ launching and screenshotting the app). Drive the browser with Playwright
   hit target? Check especially on smaller/denser objects.
 - Does the contextual panel flow (`industrial-game-ui` Rule 2) appear
   correctly anchored and dismiss correctly on outside click/Escape?
+- Depth-dependent click semantics: at `overview`/`zone` LOD, does clicking an
+  unfocused zone/machine drill the camera in (per `svg-factory-architecture`
+  → Camera & Level of Detail) rather than incorrectly opening the contextual
+  panel early? Does clicking an already-focused object open the panel rather
+  than re-triggering a camera move?
 
-### 6. Responsive behavior
+### 6. Camera & level of detail
+- Do `cameraTransition`/`levelTransition` animate smoothly between overview,
+  zone, and detail, with no pop/flash when a zone's LOD tier swaps (aggregate
+  shape ↔ individually-mounted machines)?
+- Does DOM/SVG node count actually drop when zooming back out to overview —
+  confirming unfocused zones unmount or collapse to their aggregate
+  representation rather than staying mounted at full detail off-camera (see
+  `svg-factory-architecture` → Camera & Level of Detail, "Mounting, not just
+  styling")?
+- Reverse-navigation check: does returning to overview from a detail view
+  feel like the same motion rewound, not a different, inconsistent
+  transition?
+
+### 7. Responsive behavior
 - Resize the viewport (at minimum: a small laptop width, a wide desktop
   width, and a tablet-ish width) and confirm the factory scene remains
   usable — scales/pans sensibly rather than clipping critical objects or
   UI panels off-screen.
 - Confirm contextual panels reposition instead of clipping at viewport edges.
 
-### 7. Performance
+### 8. Performance
 Check via the browser devtools/Playwright's CDP access:
 - DOM node count for the scene — flag surprising growth after adding a
   small number of objects (a sign markup is being duplicated instead of
@@ -108,7 +132,7 @@ Check via the browser devtools/Playwright's CDP access:
   whole factory tree to re-render (React profiler / obvious visual "flash"
   across unrelated objects is a tell).
 
-### 8. Accessibility
+### 9. Accessibility
 - Keyboard navigation where relevant (can key actions/menus be reached
   without a mouse where the game intends them to be).
 - Visible focus indicator on focusable/interactive elements.
@@ -123,7 +147,7 @@ Check via the browser devtools/Playwright's CDP access:
 - Labels/tooltips are meaningful, not generic ("PLC-CAB-07: Isolated" not
   "Object 12").
 
-### 9. Gameplay readability
+### 10. Gameplay readability
 The real test — after interacting with the scene, can you answer:
 - What is happening right now? (state/activity legible at a glance)
 - Where is the problem? (compromised/suspicious objects visually stand out

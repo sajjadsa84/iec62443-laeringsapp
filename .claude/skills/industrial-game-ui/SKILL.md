@@ -51,18 +51,27 @@ player needs at a glance at all times — nothing else.
 
 ## Rule 2: the click → contextual panel flow
 
-This is the canonical interaction pattern — implement new object types
-against this flow rather than inventing a new UI pattern per object:
+This is the canonical interaction pattern for an object already at `detail`
+level — implement new object types against this flow rather than inventing a
+new UI pattern per object. It only applies once the object is individually
+mounted and focused; per `svg-factory-architecture`'s Camera & Level of
+Detail section, clicking an unfocused zone/machine at `overview`/`zone`
+detail instead drills the camera in and does **not** open this panel yet —
+don't wire a single click handler to try to do both:
 
 ```
-Player clicks an object (e.g. a PLC)
+Player clicks an already-focused object (e.g. a PLC at detail level)
   → object highlights (Layer 8 per svg-factory-architecture)
-  → a small contextual panel appears near the object
+  → shared `selectedId` in the central store is set to this object's id
+  → a small contextual panel appears near the object, reading the same
+    `selectedId` (so panel and highlight can never disagree about what's
+    selected)
       - object identity/type
       - current state (industrial-visual-design §E)
       - vulnerabilities (if any)
       - available actions
-  → panel is dismissed by clicking elsewhere / pressing Escape / re-clicking
+  → panel is dismissed by clicking elsewhere / pressing Escape / re-clicking,
+    which clears `selectedId`
 ```
 
 The panel appearance/dismissal uses the `fadeIn`/`fadeOut`/`scaleIn` presets
